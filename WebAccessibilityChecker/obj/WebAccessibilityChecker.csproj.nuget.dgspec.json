@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {}
+    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {
+    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
+        "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
         "projectName": "WebAccessibilityChecker",
-        "projectPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
+        "projectPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
         "packagesPath": "C:\\Users\\abhir\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\obj\\",
+        "outputPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abhir\\AppData\\Roaming\\NuGet\\NuGet.Config"
