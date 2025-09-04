@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {}
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {}
   },
   "projects": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
+        "projectUniqueName": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
         "projectName": "WebAccessibilityChecker",
-        "projectPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
+        "projectPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\WebAccessibilityChecker.csproj",
         "packagesPath": "C:\\Users\\abhir\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\obj\\",
+        "outputPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Project1\\WebAccessibilityChecker\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abhir\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -68,20 +68,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[9.0.8, 9.0.8]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Runtime.win-x64",
-              "version": "[9.0.8, 9.0.8]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
-              "version": "[9.0.8, 9.0.8]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -91,11 +77,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }

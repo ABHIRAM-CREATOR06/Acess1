@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebAccessibilityChecker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff01edede18480b08e5ec751421e4126755df80f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f622aaffb568ffce357e0ea14e05ab9520f08b6")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebAccessibilityChecker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebAccessibilityChecker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
