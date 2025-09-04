@@ -88,33 +88,108 @@
         <Border Grid.Row="2" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
             <StackPanel>
                 <TextBlock Text="📊 Results" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <DataGrid x:Name="ResultsDataGrid" Height="300" AutoGenerateColumns="False"
+                <DataGrid x:Name="ResultsDataGrid" Height="350" AutoGenerateColumns="False"
+                          CanUserSortColumns="True" CanUserResizeColumns="True"
+                          SelectionMode="Single" IsReadOnly="True"
                           BorderThickness="0" Background="White" RowBackground="White"
-                          AlternatingRowBackground="#F8F9FA" FontSize="13">
+                          AlternatingRowBackground="#F8F9FA" FontSize="12"
+                          RowHeaderWidth="0" GridLinesVisibility="Horizontal">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="150" FontWeight="SemiBold"/>
-                        <DataGridTextColumn Header="Element" Binding="{Binding ElementSnippet}" Width="350"/>
-                        <DataGridTextColumn Header="Fix" Binding="{Binding SuggestedFix}" Width="250"/>
-                        <DataGridTextColumn Header="Severity" Binding="{Binding SeverityLevel}" Width="100">
+                        <DataGridTextColumn Header="🔍 Issue Type" Binding="{Binding Type}" Width="160" FontWeight="SemiBold">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="💻 Element Code" Binding="{Binding ElementSnippet}" Width="280">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                    <Setter Property="Background" Value="#F8F9FA"/>
+                                    <Setter Property="Margin" Value="2"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="🔧 Suggested Fix" Binding="{Binding SuggestedFix}" Width="220">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="⚠️ Severity" Binding="{Binding SeverityLevel}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Padding" Value="5,0"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
                                             <Setter Property="Foreground" Value="#E74C3C"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Background" Value="#FFF5F5"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
                                             <Setter Property="Foreground" Value="#F39C12"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Background" Value="#FFF8E1"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
                                             <Setter Property="Foreground" Value="#27AE60"/>
+                                            <Setter Property="Background" Value="#F0F8F0"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+                        <DataGridTextColumn Header="💡 Fix Example" Binding="{Binding FixExample}" Width="200">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontSize" Value="9"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Padding" Value="5,0"/>
+                                    <Setter Property="Background" Value="#F8F9FA"/>
+                                    <Setter Property="Margin" Value="2"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                     </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Height" Value="Auto"/>
+                            <Setter Property="MinHeight" Value="50"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
+                                    <Setter Property="Background" Value="#FEF2F2"/>
+                                    <Setter Property="BorderBrush" Value="#FECACA"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
+                                    <Setter Property="Background" Value="#FFFBEB"/>
+                                    <Setter Property="BorderBrush" Value="#FDE68A"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
+                                    <Setter Property="Background" Value="#F0FDF4"/>
+                                    <Setter Property="BorderBrush" Value="#BBF7D0"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F1F5F9"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
                 </DataGrid>
             </StackPanel>
         </Border>
