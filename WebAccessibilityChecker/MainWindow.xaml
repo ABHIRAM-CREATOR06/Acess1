@@ -1,0 +1,148 @@
+﻿<Window x:Class="WebAccessibilityChecker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebAccessibilityChecker"
+        mc:Ignorable="d"
+        Title="🚀 Web Accessibility Checker" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F7FA"
+        FontFamily="Segoe UI">
+    <Window.Resources>
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#004080"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CardBorder" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E1E5E9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" Opacity="0.1" ShadowDepth="2" BlurRadius="5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#F5F7FA">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="20,20,20,10" Padding="20">
+            <StackPanel>
+                <TextBlock Text="🌐 Web Accessibility Checker" FontSize="24" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <TextBlock Text="Analyze websites for accessibility compliance with WCAG, Section 508, and RPwD Act" FontSize="14" Foreground="#7F8C8D"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Input Section -->
+        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
+            <StackPanel>
+                <TextBlock Text="📝 Input" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="UrlTextBox" Width="500" Height="35" Margin="0,0,10,0"
+                             FontSize="14" Padding="10,0,0,0" VerticalContentAlignment="Center"
+                             BorderBrush="#BDC3C7" BorderThickness="1" Background="White"/>
+                    <Button x:Name="BrowseButton" Content="📁 Browse File" Click="BrowseButton_Click" Margin="0,0,10,0"
+                            Style="{StaticResource ModernButton}" Width="120"/>
+                    <Button x:Name="AnalyzeButton" Content="🔍 Analyze" Click="AnalyzeButton_Click"
+                            Style="{StaticResource ModernButton}" Width="100"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Results Section -->
+        <Border Grid.Row="2" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
+            <StackPanel>
+                <TextBlock Text="📊 Results" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <DataGrid x:Name="ResultsDataGrid" Height="300" AutoGenerateColumns="False"
+                          BorderThickness="0" Background="White" RowBackground="White"
+                          AlternatingRowBackground="#F8F9FA" FontSize="13">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="150" FontWeight="SemiBold"/>
+                        <DataGridTextColumn Header="Element" Binding="{Binding ElementSnippet}" Width="350"/>
+                        <DataGridTextColumn Header="Fix" Binding="{Binding SuggestedFix}" Width="250"/>
+                        <DataGridTextColumn Header="Severity" Binding="{Binding SeverityLevel}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
+                                            <Setter Property="Foreground" Value="#E74C3C"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
+                                            <Setter Property="Foreground" Value="#F39C12"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
+                                            <Setter Property="Foreground" Value="#27AE60"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+
+        <!-- Score Section -->
+        <Border Grid.Row="3" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
+            <StackPanel>
+                <TextBlock Text="📈 Accessibility Metrics" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🎯 Score: " FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
+                    <TextBlock x:Name="ScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,30,0"/>
+                    <TextBlock Text="✅ Status: " FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
+                    <TextBlock x:Name="ComplianceTextBlock" Text="--" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Export Section -->
+        <Border Grid.Row="4" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
+            <StackPanel>
+                <TextBlock Text="💾 Export Report" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="ExportTxtButton" Content="📄 Export to TXT" Click="ExportTxtButton_Click"
+                            Style="{StaticResource ModernButton}" Background="#28A745"/>
+                    <Button x:Name="ExportPdfButton" Content="📕 Export to PDF" Click="ExportPdfButton_Click" Margin="15,0,0,0"
+                            Style="{StaticResource ModernButton}" Background="#DC3545"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
