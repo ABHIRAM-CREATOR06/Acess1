@@ -11,5 +11,6 @@ namespace WebAccessibilityChecker.Models
         public string? SuggestedFix { get; set; }
         public Severity SeverityLevel { get; set; }
         public string? FixExample { get; set; } // For bonus
+        public Category Category { get; set; }
     }
 }

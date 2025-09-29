@@ -71,3 +71,5 @@ c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\De
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Debug\net9.0-windows\Microsoft.Extensions.Options.dll
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Debug\net9.0-windows\Microsoft.Extensions.Primitives.dll
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Debug\net9.0-windows\PuppeteerSharp.dll
+c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Debug\net9.0-windows\LiveCharts.dll
+c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll

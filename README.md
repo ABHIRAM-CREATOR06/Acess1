@@ -18,6 +18,7 @@ A comprehensive Windows desktop application for checking web accessibility compl
 - **Color Contrast**: Analyze text/background color ratios
 - **Eye Comfort**: Check font sizes and line heights
 - **JavaScript Content**: Render dynamic content with headless browser
+- **Environmental Impact**: Calculate energy use and CO₂ emissions
 
 ### Export Options
 - **TXT Reports**: Detailed text-based accessibility reports
@@ -156,6 +157,31 @@ The app checks compliance with:
 2. **Operable**: Keyboard navigation, timing, seizures
 3. **Understandable**: Readable text, predictable behavior
 4. **Robust**: Compatible with assistive technologies
+
+## 🌱 Environmental Impact Analysis
+
+The app now includes comprehensive environmental impact assessment to help developers understand and reduce their websites' carbon footprint.
+
+### Environmental Metrics
+- **Energy Consumption**: Calculated in kWh per page load
+- **CO₂ Emissions**: Estimated carbon emissions in grams per page load
+- **CDN Detection**: Identifies if the site uses content delivery networks
+- **Environmental Rating**: Eco, Moderate, or High Impact classification
+
+### How It Works
+1. **Page Weight Analysis**: Measures total data transferred
+2. **Request Counting**: Tracks number of HTTP requests
+3. **CDN Detection**: Identifies popular CDN usage
+4. **Energy Calculation**: Estimates server and network energy use
+5. **CO₂ Estimation**: Converts energy use to carbon emissions
+
+### Environmental Scoring
+- **Eco (< 10g CO₂)**: Excellent environmental performance
+- **Moderate (10-50g CO₂)**: Average environmental impact
+- **High Impact (> 50g CO₂)**: Significant carbon footprint
+
+### Export Integration
+Environmental data is included in all export formats (TXT, PDF) but not displayed in the main UI to keep the focus on accessibility analysis.
 
 ## 🤝 Contributing
 

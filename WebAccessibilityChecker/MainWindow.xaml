@@ -4,14 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WebAccessibilityChecker"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="🚀 Web Accessibility Checker" Height="700" Width="1200"
+        Title="🚀 Web Accessibility Checker" Height="800" Width="1200"
         WindowStartupLocation="CenterScreen"
         Background="#F5F7FA"
         FontFamily="Segoe UI">
     <Window.Resources>
         <Style x:Key="ModernButton" TargetType="Button">
-            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#007ACC" Offset="0"/>
+                        <GradientStop Color="#005A9E" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -24,15 +32,15 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5">
+                                CornerRadius="25">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#005A9E"/>
+                                <Setter Property="Opacity" Value="0.8"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#004080"/>
+                                <Setter Property="Opacity" Value="0.6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -40,23 +48,32 @@
             </Setter>
         </Style>
         <Style x:Key="CardBorder" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#FFFFFF" Offset="0"/>
+                        <GradientStop Color="#F8F9FA" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
             <Setter Property="BorderBrush" Value="#E1E5E9"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="CornerRadius" Value="15"/>
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect Color="#000000" Opacity="0.1" ShadowDepth="2" BlurRadius="5"/>
+                    <DropShadowEffect Color="#000000" Opacity="0.2" ShadowDepth="5" BlurRadius="10"/>
                 </Setter.Value>
             </Setter>
         </Style>
+        <Storyboard x:Key="LoadingAnimation">
+            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1" RepeatBehavior="Forever" AutoReverse="True"/>
+        </Storyboard>
     </Window.Resources>
     <Grid Background="#F5F7FA">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -74,116 +91,292 @@
                 <TextBlock Text="📝 Input" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBox x:Name="UrlTextBox" Width="500" Height="35" Margin="0,0,10,0"
-                             FontSize="14" Padding="10,0,0,0" VerticalContentAlignment="Center"
-                             BorderBrush="#BDC3C7" BorderThickness="1" Background="White"/>
+                              FontSize="14" Padding="10,0,0,0" VerticalContentAlignment="Center"
+                              BorderBrush="#BDC3C7" BorderThickness="1" Background="White"/>
                     <Button x:Name="BrowseButton" Content="📁 Browse File" Click="BrowseButton_Click" Margin="0,0,10,0"
-                            Style="{StaticResource ModernButton}" Width="120"/>
+                             Style="{StaticResource ModernButton}" Width="120"/>
                     <Button x:Name="AnalyzeButton" Content="🔍 Analyze" Click="AnalyzeButton_Click"
-                            Style="{StaticResource ModernButton}" Width="100"/>
+                             Style="{StaticResource ModernButton}" Width="100"/>
                 </StackPanel>
+                <ProgressBar x:Name="LoadingProgressBar" Height="5" Margin="0,10,0,0" Visibility="Collapsed" IsIndeterminate="True" Background="#E1E5E9" Foreground="#007ACC"/>
+                <TextBlock x:Name="LoadingTextBlock" Text="Analyzing website..." FontSize="12" Foreground="#7F8C8D" Margin="0,5,0,0" Visibility="Collapsed"/>
             </StackPanel>
         </Border>
 
-        <!-- Results Section -->
+
+        <!-- Combined Results and Scores Section -->
         <Border Grid.Row="2" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
-            <StackPanel>
-                <TextBlock Text="📊 Results" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <DataGrid x:Name="ResultsDataGrid" Height="350" AutoGenerateColumns="False"
-                          CanUserSortColumns="True" CanUserResizeColumns="True"
-                          SelectionMode="Single" IsReadOnly="True"
-                          BorderThickness="0" Background="White" RowBackground="White"
-                          AlternatingRowBackground="#F8F9FA" FontSize="12"
-                          RowHeaderWidth="0" GridLinesVisibility="Horizontal">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="🔍 Issue Type" Binding="{Binding Type}" Width="160" FontWeight="SemiBold">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="💻 Element Code" Binding="{Binding ElementSnippet}" Width="280">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                    <Setter Property="FontFamily" Value="Consolas"/>
-                                    <Setter Property="FontSize" Value="10"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="5,0"/>
-                                    <Setter Property="Background" Value="#F8F9FA"/>
-                                    <Setter Property="Margin" Value="2"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="🔧 Suggested Fix" Binding="{Binding SuggestedFix}" Width="220">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="⚠️ Severity" Binding="{Binding SeverityLevel}" Width="100">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="Padding" Value="5,0"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
-                                            <Setter Property="Foreground" Value="#E74C3C"/>
-                                            <Setter Property="Background" Value="#FFF5F5"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
-                                            <Setter Property="Foreground" Value="#F39C12"/>
-                                            <Setter Property="Background" Value="#FFF8E1"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
-                                            <Setter Property="Foreground" Value="#27AE60"/>
-                                            <Setter Property="Background" Value="#F0F8F0"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn Header="💡 Fix Example" Binding="{Binding FixExample}" Width="200">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                    <Setter Property="FontFamily" Value="Consolas"/>
-                                    <Setter Property="FontSize" Value="9"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="5,0"/>
-                                    <Setter Property="Background" Value="#F8F9FA"/>
-                                    <Setter Property="Margin" Value="2"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Height" Value="Auto"/>
-                            <Setter Property="MinHeight" Value="50"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
-                                    <Setter Property="Background" Value="#FEF2F2"/>
-                                    <Setter Property="BorderBrush" Value="#FECACA"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
-                                    <Setter Property="Background" Value="#FFFBEB"/>
-                                    <Setter Property="BorderBrush" Value="#FDE68A"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
-                                    <Setter Property="Background" Value="#F0FDF4"/>
-                                    <Setter Property="BorderBrush" Value="#BBF7D0"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                </DataTrigger>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Analysis Results (Left Side) -->
+                <Grid Grid.Column="0" Margin="0,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="🔍 Analysis Results" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                    <DataGrid Grid.Row="1" x:Name="ResultsDataGrid" AutoGenerateColumns="False"
+                               CanUserSortColumns="True" CanUserResizeColumns="True"
+                               SelectionMode="Single" IsReadOnly="True"
+                               BorderThickness="0" Background="White" RowBackground="White"
+                               AlternatingRowBackground="#F8F9FA" FontSize="12"
+                               RowHeaderWidth="0" GridLinesVisibility="Horizontal"
+                               VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="📂 Category" Binding="{Binding Category}" Width="120" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Category}" Value="Accessibility">
+                                                <Setter Property="Foreground" Value="#007ACC"/>
+                                                <Setter Property="Background" Value="#E6F3FF"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Category}" Value="SEO">
+                                                <Setter Property="Foreground" Value="#28A745"/>
+                                                <Setter Property="Background" Value="#E8F5E8"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Category}" Value="Performance">
+                                                <Setter Property="Foreground" Value="#FFC107"/>
+                                                <Setter Property="Background" Value="#FFF8E1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Category}" Value="BestPractices">
+                                                <Setter Property="Foreground" Value="#DC3545"/>
+                                                <Setter Property="Background" Value="#FEE"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Category}" Value="Environment">
+                                                <Setter Property="Foreground" Value="#17A2B8"/>
+                                                <Setter Property="Background" Value="#E0F7FA"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Category}" Value="Safety">
+                                                <Setter Property="Foreground" Value="#6F42C1"/>
+                                                <Setter Property="Background" Value="#F3E5F5"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="🔍 Issue Type" Binding="{Binding Type}" Width="140" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="💻 Element Code" Binding="{Binding ElementSnippet}" Width="200">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                        <Setter Property="FontSize" Value="10"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="Background" Value="#F8F9FA"/>
+                                        <Setter Property="Margin" Value="2"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="🔧 Suggested Fix" Binding="{Binding SuggestedFix}" Width="180">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="⚠️ Severity" Binding="{Binding SeverityLevel}" Width="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
+                                                <Setter Property="Foreground" Value="#E74C3C"/>
+                                                <Setter Property="Background" Value="#FFF5F5"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
+                                                <Setter Property="Foreground" Value="#F39C12"/>
+                                                <Setter Property="Background" Value="#FFF8E1"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
+                                                <Setter Property="Foreground" Value="#27AE60"/>
+                                                <Setter Property="Background" Value="#F0F8F0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="💡 Fix Example" Binding="{Binding FixExample}" Width="150">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                        <Setter Property="FontSize" Value="9"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="Background" Value="#F8F9FA"/>
+                                        <Setter Property="Margin" Value="2"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Height" Value="Auto"/>
+                                <Setter Property="MinHeight" Value="50"/>
+                                <Style.Triggers>
+                                    <!-- Category-based coloring -->
+                                    <DataTrigger Binding="{Binding Category}" Value="Accessibility">
+                                        <Setter Property="Background" Value="#F0F8FF"/>
+                                        <Setter Property="BorderBrush" Value="#007ACC"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Category}" Value="SEO">
+                                        <Setter Property="Background" Value="#F8FFF8"/>
+                                        <Setter Property="BorderBrush" Value="#28A745"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Category}" Value="Performance">
+                                        <Setter Property="Background" Value="#FFFFF8"/>
+                                        <Setter Property="BorderBrush" Value="#FFC107"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Category}" Value="BestPractices">
+                                        <Setter Property="Background" Value="#FFF8F8"/>
+                                        <Setter Property="BorderBrush" Value="#DC3545"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Category}" Value="Environment">
+                                        <Setter Property="Background" Value="#F0FDFA"/>
+                                        <Setter Property="BorderBrush" Value="#17A2B8"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Category}" Value="Safety">
+                                        <Setter Property="Background" Value="#FAF5FF"/>
+                                        <Setter Property="BorderBrush" Value="#6F42C1"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    </DataTrigger>
+                                    <!-- Severity-based overrides (higher priority) -->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="Accessibility"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="SEO"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="Performance"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="BestPractices"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="Accessibility"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="SEO"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="Performance"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="BestPractices"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="Environment"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
+                                            <Condition Binding="{Binding Category}" Value="Safety"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFE6E6"/>
+                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="Environment"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
+                                            <Condition Binding="{Binding Category}" Value="Safety"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#FFF8E1"/>
+                                        <Setter Property="BorderBrush" Value="#F39C12"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                    </MultiDataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="#F1F5F9"/>
                                 </Trigger>
@@ -191,21 +384,62 @@
                         </Style>
                     </DataGrid.RowStyle>
                 </DataGrid>
-            </StackPanel>
-        </Border>
+            </Grid>
 
-        <!-- Score Section -->
-        <Border Grid.Row="3" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
-            <StackPanel>
-                <TextBlock Text="📈 Accessibility Metrics" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🎯 Score: " FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
-                    <TextBlock x:Name="ScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#007ACC" Margin="0,0,30,0"/>
-                    <TextBlock Text="✅ Status: " FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
-                    <TextBlock x:Name="ComplianceTextBlock" Text="--" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60"/>
+            <!-- Category Scores (Right Side) -->
+            <Border Grid.Column="1" Background="White" BorderBrush="#E1E5E9" BorderThickness="1" CornerRadius="10" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="📊 Category Scores" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,15"/>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="♿ Accessibility" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="AccessibilityScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#007ACC" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="🔍 SEO" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="SEOScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#28A745" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="⚡ Performance" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="PerformanceScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#FFC107" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="✨ Best Practices" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="BestPracticesScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#DC3545" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock Text="🌱 Environment" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="EnvironmentScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#17A2B8" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="🔒 Safety" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="SafetyScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#6F42C1" Margin="0,5,0,10"/>
+                    </StackPanel>
+                    <Separator Margin="0,0,0,15"/>
+                    <StackPanel>
+                        <TextBlock Text="✅ Overall Status" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock x:Name="ComplianceTextBlock" Text="--" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60" Margin="0,5,0,0"/>
+                    </StackPanel>
+                    <Separator Margin="0,15,0,15"/>
+                    <TextBlock Text="📊 Category Breakdown" FontSize="14" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                    <StackPanel Margin="0,0,0,15">
+                        <TextBlock x:Name="CategorySummaryTextBlock" Text="--" FontSize="12" Foreground="#7F8C8D" TextWrapping="Wrap"/>
+                    </StackPanel>
+                    <Separator Margin="0,0,0,15"/>
+                    <lvc:CartesianChart x:Name="ScoreChart" Height="180" Margin="0,0,0,0">
+                        <lvc:CartesianChart.Series>
+                            <lvc:ColumnSeries Title="Scores" Values="{Binding Scores}" Fill="#007ACC" />
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Categories" Labels="{Binding Labels}" FontSize="10"/>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Score" MinValue="0" MaxValue="100" FontSize="10"/>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
                 </StackPanel>
-            </StackPanel>
-        </Border>
+            </Border>
+        </Grid>
+    </Border>
 
         <!-- Export Section -->
         <Border Grid.Row="4" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
@@ -213,9 +447,11 @@
                 <TextBlock Text="💾 Export Report" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="ExportTxtButton" Content="📄 Export to TXT" Click="ExportTxtButton_Click"
-                            Style="{StaticResource ModernButton}" Background="#28A745"/>
+                             Style="{StaticResource ModernButton}" Background="#28A745"/>
                     <Button x:Name="ExportPdfButton" Content="📕 Export to PDF" Click="ExportPdfButton_Click" Margin="15,0,0,0"
-                            Style="{StaticResource ModernButton}" Background="#DC3545"/>
+                             Style="{StaticResource ModernButton}" Background="#DC3545"/>
+                    <Button x:Name="ExportHtmlButton" Content="🌐 Export to HTML" Click="ExportHtmlButton_Click" Margin="15,0,0,0"
+                             Style="{StaticResource ModernButton}" Background="#007BFF"/>
                 </StackPanel>
             </StackPanel>
         </Border>

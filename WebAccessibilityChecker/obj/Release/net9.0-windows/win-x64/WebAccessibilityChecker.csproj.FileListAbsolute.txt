@@ -254,7 +254,6 @@ C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Re
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\hostfxr.dll
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\hostpolicy.dll
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\mscordaccore.dll
-C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\mscordaccore_amd64_amd64_9.0.825.36511.dll
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\mscordbi.dll
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\mscorrc.dll
 C:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\msquic.dll
@@ -444,3 +443,6 @@ c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Re
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\Microsoft.Extensions.Options.dll
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\Microsoft.Extensions.Primitives.dll
 c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\PuppeteerSharp.dll
+c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\LiveCharts.dll
+c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\LiveCharts.Wpf.dll
+c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\bin\Release\net9.0-windows\win-x64\mscordaccore_amd64_amd64_9.0.925.41916.dll

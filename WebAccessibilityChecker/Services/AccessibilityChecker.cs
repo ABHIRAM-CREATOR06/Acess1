@@ -6,25 +6,184 @@ namespace WebAccessibilityChecker.Services
 {
     public class AccessibilityChecker
     {
-        public Report CheckAccessibility(HtmlDocument doc)
+        public Report CheckAccessibility(PageLoadResult loadResult)
         {
             var report = new Report();
+            var doc = loadResult.Document;
+
+            // Set basic environmental data
+            report.PageSize = loadResult.PageSize;
+            report.RequestCount = loadResult.RequestCount;
+            report.PageLoadTime = loadResult.LoadTime;
+
+            // Check for CDN usage (simplified detection)
+            report.UsesCDN = DetectCDNUsage(doc);
+
+            // Calculate environmental impact
+            CalculateEnvironmentalImpact(report);
+
             report.Issues.AddRange(CheckAltText(doc));
             report.Issues.AddRange(CheckLabels(doc));
             report.Issues.AddRange(CheckTitle(doc));
             report.Issues.AddRange(CheckHeadingHierarchy(doc));
             report.Issues.AddRange(CheckColorContrast(doc));
             report.Issues.AddRange(CheckEyeComfort(doc));
+            report.Issues.AddRange(CheckAriaAttributes(doc));
+            report.Issues.AddRange(CheckLangAttributes(doc));
+            report.Issues.AddRange(CheckWebXRSupport(doc));
+            report.Issues.AddRange(CheckBestPractices(doc));
+            report.Issues.AddRange(CheckMobileResponsiveness(doc));
+            report.Issues.AddRange(CheckDarkModeSupport(doc));
+            report.Issues.AddRange(CheckEnvironment(doc, loadResult));
+            report.Issues.AddRange(CheckSafety(doc, loadResult, report.WebsiteUrl));
 
-            // Calculate score and compliance
-            int penalty = report.ErrorCount * 10 + report.WarningCount * 5 + report.InfoCount * 1;
-            report.AccessibilityScore = Math.Max(0, 100 - penalty);
+            // Add performance issues
+            report.Issues.AddRange(CheckPerformance(loadResult));
+
+            // Calculate scores
+            var accessibilityIssues = report.Issues.Where(i => i.Category == Category.Accessibility).ToList();
+            int accPenalty = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Error) * 10 +
+                              accessibilityIssues.Count(i => i.SeverityLevel == Severity.Warning) * 5 +
+                              accessibilityIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
+            report.AccessibilityScore = Math.Max(0, 100 - accPenalty);
+
+            // Calculate performance score
+            var performanceIssues = report.Issues.Where(i => i.Category == Category.Performance).ToList();
+            int perfPenalty = performanceIssues.Count(i => i.SeverityLevel == Severity.Error) * 10 +
+                              performanceIssues.Count(i => i.SeverityLevel == Severity.Warning) * 5 +
+                              performanceIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
+            report.PerformanceScore = Math.Max(0, 100 - perfPenalty);
+
+            // Calculate environment score
+            var environmentIssues = report.Issues.Where(i => i.Category == Category.Environment).ToList();
+            int envPenalty = environmentIssues.Count(i => i.SeverityLevel == Severity.Error) * 10 +
+                             environmentIssues.Count(i => i.SeverityLevel == Severity.Warning) * 5 +
+                             environmentIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
+            report.EnvironmentScore = Math.Max(0, 100 - envPenalty);
+
+            // Calculate safety score
+            var safetyIssues = report.Issues.Where(i => i.Category == Category.Safety).ToList();
+            int safetyPenalty = safetyIssues.Count(i => i.SeverityLevel == Severity.Error) * 10 +
+                                safetyIssues.Count(i => i.SeverityLevel == Severity.Warning) * 5 +
+                                safetyIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
+            report.SafetyScore = Math.Max(0, 100 - safetyPenalty);
+
+            // Overall compliance based on accessibility for now
             if (report.AccessibilityScore >= 95) report.ComplianceStatus = "Fully Compliant";
             else if (report.AccessibilityScore >= 80) report.ComplianceStatus = "Mostly Compliant";
             else if (report.AccessibilityScore >= 60) report.ComplianceStatus = "Partially Compliant";
             else report.ComplianceStatus = "Not Compliant";
 
             return report;
+        }
+
+        private bool DetectCDNUsage(HtmlDocument doc)
+        {
+            var scripts = doc.DocumentNode.SelectNodes("//script[@src]");
+            var links = doc.DocumentNode.SelectNodes("//link[@href]");
+            var cdnDomains = new[] { "cdn.jsdelivr.net", "cdnjs.cloudflare.com", "unpkg.com", "ajax.googleapis.com", "code.jquery.com", "stackpath.bootstrapcdn.com", "maxcdn.bootstrapcdn.com" };
+
+            if (scripts != null)
+            {
+                foreach (var script in scripts)
+                {
+                    var src = script.Attributes["src"]?.Value;
+                    if (!string.IsNullOrEmpty(src) && cdnDomains.Any(domain => src.Contains(domain)))
+                        return true;
+                }
+            }
+
+            if (links != null)
+            {
+                foreach (var link in links)
+                {
+                    var href = link.Attributes["href"]?.Value;
+                    if (!string.IsNullOrEmpty(href) && cdnDomains.Any(domain => href.Contains(domain)))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void CalculateEnvironmentalImpact(Report report)
+        {
+            // Base energy consumption calculation
+            // Formula based on research: ~0.2 kWh per GB of data transfer
+            // Plus base consumption for device and network
+
+            double dataTransferGB = report.PageSize / (1024.0 * 1024.0 * 1024.0); // Convert bytes to GB
+            double baseEnergyKWh = 0.01; // Base energy for loading a page
+            double dataEnergyKWh = dataTransferGB * 200; // 0.2 kWh per GB
+            double requestEnergyKWh = report.RequestCount * 0.0001; // Small energy per request
+
+            // CDN reduces energy (cached content)
+            if (report.UsesCDN)
+                dataEnergyKWh *= 0.7; // 30% reduction
+
+            report.EnergyConsumptionKWh = baseEnergyKWh + dataEnergyKWh + requestEnergyKWh;
+
+            // CO₂ calculation: Average 0.5 kg CO₂ per kWh (varies by region)
+            report.CO2EmissionsGrams = report.EnergyConsumptionKWh * 500; // Convert to grams
+
+            // Environmental rating
+            if (report.CO2EmissionsGrams < 10) report.EnvironmentalRating = "Eco";
+            else if (report.CO2EmissionsGrams < 50) report.EnvironmentalRating = "Moderate";
+            else report.EnvironmentalRating = "High Impact";
+        }
+
+        public List<Issue> CheckPerformance(PageLoadResult loadResult)
+        {
+            var issues = new List<Issue>();
+            if (loadResult.LoadTime > 3)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Slow Page Load",
+                    ElementSnippet = $"Load time: {loadResult.LoadTime}s",
+                    SuggestedFix = "Optimize images, minify CSS/JS, use caching",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "Use lazy loading, compress assets",
+                    Category = Category.Performance
+                });
+            }
+            if (loadResult.RequestCount > 50)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "High Request Count",
+                    ElementSnippet = $"Requests: {loadResult.RequestCount}",
+                    SuggestedFix = "Combine files, use sprites, reduce dependencies",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "Bundle CSS/JS files",
+                    Category = Category.Performance
+                });
+            }
+            if (!loadResult.IsCompressed)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "No Compression",
+                    ElementSnippet = "Content-Encoding header missing",
+                    SuggestedFix = "Enable gzip compression on server",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "Configure server for gzip",
+                    Category = Category.Performance
+                });
+            }
+            if (!loadResult.HasCachingHeaders)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "No Caching Headers",
+                    ElementSnippet = "Cache-Control or Expires missing",
+                    SuggestedFix = "Add caching headers for static assets",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "Cache-Control: max-age=31536000",
+                    Category = Category.Performance
+                });
+            }
+            return issues;
         }
 
         private List<Issue> CheckAltText(HtmlDocument doc)
@@ -43,7 +202,8 @@ namespace WebAccessibilityChecker.Services
                             ElementSnippet = img.OuterHtml,
                             SuggestedFix = "Add alt attribute to img tag",
                             SeverityLevel = Severity.Error,
-                            FixExample = "<img src='image.jpg' alt='Description of image'>"
+                            FixExample = "<img src='image.jpg' alt='Description of image'>",
+                            Category = Category.Accessibility
                         });
                     }
                 }
@@ -71,7 +231,8 @@ namespace WebAccessibilityChecker.Services
                                 ElementSnippet = input.OuterHtml,
                                 SuggestedFix = "Add label with for attribute",
                                 SeverityLevel = Severity.Error,
-                                FixExample = "<label for='inputId'>Label text</label><input id='inputId' type='text'>"
+                                FixExample = "<label for='inputId'>Label text</label><input id='inputId' type='text'>",
+                                Category = Category.Accessibility
                             });
                         }
                     }
@@ -92,7 +253,8 @@ namespace WebAccessibilityChecker.Services
                     ElementSnippet = "<head>...</head>",
                     SuggestedFix = "Add <title> tag in <head>",
                     SeverityLevel = Severity.Error,
-                    FixExample = "<title>Page Title</title>"
+                    FixExample = "<title>Page Title</title>",
+                    Category = Category.Accessibility
                 });
             }
             return issues;
@@ -116,7 +278,8 @@ namespace WebAccessibilityChecker.Services
                             ElementSnippet = h.OuterHtml,
                             SuggestedFix = "Ensure headings follow logical order",
                             SeverityLevel = Severity.Warning,
-                            FixExample = "Use h1, then h2, etc."
+                            FixExample = "Use h1, then h2, etc.",
+                            Category = Category.Accessibility
                         });
                     }
                     lastLevel = level;
@@ -149,7 +312,8 @@ namespace WebAccessibilityChecker.Services
                                     ElementSnippet = el.OuterHtml,
                                     SuggestedFix = "Increase contrast ratio to at least 4.5:1",
                                     SeverityLevel = Severity.Warning,
-                                    FixExample = "Use darker text on lighter background"
+                                    FixExample = "Use darker text on lighter background",
+                                    Category = Category.Accessibility
                                 });
                             }
                         }
@@ -180,7 +344,8 @@ namespace WebAccessibilityChecker.Services
                                 ElementSnippet = el.OuterHtml,
                                 SuggestedFix = "Increase font size to at least 14px",
                                 SeverityLevel = Severity.Warning,
-                                FixExample = "font-size: 16px;"
+                                FixExample = "font-size: 16px;",
+                                Category = Category.Accessibility
                             });
                         }
                         if (lineHeight < 1.5)
@@ -191,7 +356,8 @@ namespace WebAccessibilityChecker.Services
                                 ElementSnippet = el.OuterHtml,
                                 SuggestedFix = "Increase line height to at least 1.5",
                                 SeverityLevel = Severity.Info,
-                                FixExample = "line-height: 1.6;"
+                                FixExample = "line-height: 1.6;",
+                                Category = Category.Accessibility
                             });
                         }
                     }
@@ -260,6 +426,422 @@ namespace WebAccessibilityChecker.Services
                 return (r, g, b);
             }
             return (0, 0, 0); // default black
+        }
+
+        private List<Issue> CheckAriaAttributes(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var allElements = doc.DocumentNode.SelectNodes("//*");
+            if (allElements != null)
+            {
+                foreach (var el in allElements)
+                {
+                    if (el.Attributes.Any(a => a.Name.StartsWith("aria-")))
+                    {
+                        // Check for invalid roles
+                        var role = el.Attributes["role"]?.Value;
+                        if (!string.IsNullOrEmpty(role))
+                        {
+                            var validRoles = new[] { "button", "checkbox", "dialog", "gridcell", "link", "listbox", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "progressbar", "radio", "scrollbar", "searchbox", "slider", "spinbutton", "tab", "tabpanel", "textbox", "tooltip", "treeitem", "banner", "complementary", "contentinfo", "main", "navigation", "region", "search", "alert", "log", "marquee", "status", "timer", "alertdialog", "application", "article", "columnheader", "definition", "directory", "document", "group", "heading", "img", "list", "listitem", "math", "note", "presentation", "row", "rowgroup", "rowheader", "separator", "toolbar", "grid", "row", "tree", "treegrid" };
+                            if (!validRoles.Contains(role))
+                            {
+                                issues.Add(new Issue
+                                {
+                                    Type = "Invalid ARIA Role",
+                                    ElementSnippet = el.OuterHtml,
+                                    SuggestedFix = "Use a valid ARIA role",
+                                    SeverityLevel = Severity.Error,
+                                    FixExample = "role=\"button\"",
+                                    Category = Category.Accessibility
+                                });
+                            }
+                        }
+
+                        // Check for redundant ARIA
+                        if (el.Name == "button" && el.Attributes.Contains("role") && el.Attributes["role"].Value == "button")
+                        {
+                            issues.Add(new Issue
+                            {
+                                Type = "Redundant ARIA Role",
+                                ElementSnippet = el.OuterHtml,
+                                SuggestedFix = "Remove redundant role attribute",
+                                SeverityLevel = Severity.Warning,
+                                FixExample = "<button>Click me</button>",
+                                Category = Category.Accessibility
+                            });
+                        }
+
+                        // Check aria-label
+                        var ariaLabel = el.Attributes["aria-label"]?.Value;
+                        if (string.IsNullOrEmpty(ariaLabel) && el.Attributes.Contains("aria-labelledby"))
+                        {
+                            var labelledBy = el.Attributes["aria-labelledby"]?.Value;
+                            if (!string.IsNullOrEmpty(labelledBy))
+                            {
+                                try
+                                {
+                                    // Use a safer approach to find elements by ID
+                                    var labelEl = doc.GetElementbyId(labelledBy);
+                                    if (labelEl == null || string.IsNullOrEmpty(labelEl.InnerText.Trim()))
+                                    {
+                                        issues.Add(new Issue
+                                        {
+                                            Type = "Missing aria-labelledby Target",
+                                            ElementSnippet = el.OuterHtml,
+                                            SuggestedFix = "Ensure aria-labelledby points to an element with text",
+                                            SeverityLevel = Severity.Error,
+                                            FixExample = "<div id=\"label\">Label text</div><input aria-labelledby=\"label\">",
+                                            Category = Category.Accessibility
+                                        });
+                                    }
+                                }
+                                catch
+                                {
+                                    // If there's an issue finding the element, still report it
+                                    issues.Add(new Issue
+                                    {
+                                        Type = "Invalid aria-labelledby Reference",
+                                        ElementSnippet = el.OuterHtml,
+                                        SuggestedFix = "Ensure aria-labelledby contains a valid element ID",
+                                        SeverityLevel = Severity.Error,
+                                        FixExample = "<div id=\"label\">Label text</div><input aria-labelledby=\"label\">",
+                                        Category = Category.Accessibility
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckLangAttributes(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var html = doc.DocumentNode.SelectSingleNode("//html");
+            if (html == null || !html.Attributes.Contains("lang"))
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Missing lang Attribute",
+                    ElementSnippet = "<html>",
+                    SuggestedFix = "Add lang attribute to html tag",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "<html lang=\"en\">",
+                    Category = Category.Accessibility
+                });
+            }
+            else
+            {
+                var lang = html.Attributes["lang"].Value;
+                if (lang.Contains("-"))
+                {
+                    var parts = lang.Split('-');
+                    if (parts.Length == 2)
+                    {
+                        // Check RTL languages
+                        var rtlLangs = new[] { "ar", "he", "fa", "ur", "yi" };
+                        if (rtlLangs.Contains(parts[0].ToLower()))
+                        {
+                            // Could check for dir="rtl" but for now, just note
+                            issues.Add(new Issue
+                            {
+                                Type = "RTL Language Detected",
+                                ElementSnippet = html.OuterHtml,
+                                SuggestedFix = "Ensure proper RTL support",
+                                SeverityLevel = Severity.Info,
+                                FixExample = "Consider dir=\"rtl\" if needed",
+                                Category = Category.Accessibility
+                            });
+                        }
+                    }
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckWebXRSupport(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var scripts = doc.DocumentNode.SelectNodes("//script");
+            bool hasWebXR = false;
+            if (scripts != null)
+            {
+                foreach (var script in scripts)
+                {
+                    var src = script.Attributes["src"]?.Value;
+                    var content = script.InnerText;
+                    if ((!string.IsNullOrEmpty(src) && src.Contains("webxr")) || content.Contains("navigator.xr"))
+                    {
+                        hasWebXR = true;
+                        break;
+                    }
+                }
+            }
+            if (hasWebXR)
+            {
+                // Basic check: ensure some accessibility considerations
+                issues.Add(new Issue
+                {
+                    Type = "WebXR Accessibility",
+                    ElementSnippet = "<script> with WebXR",
+                    SuggestedFix = "Add accessibility features for VR/AR content",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "Consider audio cues, haptic feedback, etc.",
+                    Category = Category.Accessibility
+                });
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckBestPractices(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var head = doc.DocumentNode.SelectSingleNode("//head");
+            if (head != null)
+            {
+                var favicon = head.SelectSingleNode("//link[@rel='icon']");
+                if (favicon == null)
+                {
+                    issues.Add(new Issue
+                    {
+                        Type = "Missing Favicon",
+                        ElementSnippet = "<head>",
+                        SuggestedFix = "Add favicon link",
+                        SeverityLevel = Severity.Info,
+                        FixExample = "<link rel=\"icon\" href=\"favicon.ico\">",
+                        Category = Category.BestPractices
+                    });
+                }
+            }
+            // Check for HTTPS (but since we load via HTTP, hard to check)
+            // Other best practices can be added
+            return issues;
+        }
+
+        private List<Issue> CheckMobileResponsiveness(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var viewport = doc.DocumentNode.SelectSingleNode("//meta[@name='viewport']");
+            if (viewport == null)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Missing Viewport Meta",
+                    ElementSnippet = "<head>",
+                    SuggestedFix = "Add viewport meta for mobile",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+                    Category = Category.Accessibility // Mobile is part of accessibility
+                });
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckDarkModeSupport(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var styles = doc.DocumentNode.SelectNodes("//style | //link[@rel='stylesheet']");
+            bool hasDarkMode = false;
+            if (styles != null)
+            {
+                foreach (var style in styles)
+                {
+                    var content = style.InnerText;
+                    if (content.Contains("@media (prefers-color-scheme: dark)") || content.Contains("prefers-color-scheme"))
+                    {
+                        hasDarkMode = true;
+                        break;
+                    }
+                }
+            }
+            if (!hasDarkMode)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "No Dark Mode Support",
+                    ElementSnippet = "<style> or <link>",
+                    SuggestedFix = "Add dark mode styles",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "@media (prefers-color-scheme: dark) { body { background: black; } }",
+                    Category = Category.Accessibility
+                });
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckEnvironment(HtmlDocument doc, PageLoadResult loadResult)
+        {
+            var issues = new List<Issue>();
+
+            // Check for large page size (environmental impact)
+            if (loadResult.PageSize > 5 * 1024 * 1024) // 5MB
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Large Page Size",
+                    ElementSnippet = $"Size: {loadResult.PageSize / (1024.0 * 1024.0):F2} MB",
+                    SuggestedFix = "Optimize images, minify assets, remove unused code",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "Compress images, use WebP format",
+                    Category = Category.Environment
+                });
+            }
+
+            // Check for excessive requests
+            if (loadResult.RequestCount > 100)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "High Network Requests",
+                    ElementSnippet = $"Requests: {loadResult.RequestCount}",
+                    SuggestedFix = "Bundle resources, use HTTP/2, reduce dependencies",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "Combine CSS/JS files, use sprites",
+                    Category = Category.Environment
+                });
+            }
+
+            // Check for unoptimized images (basic check)
+            var imgs = doc.DocumentNode.SelectNodes("//img");
+            if (imgs != null)
+            {
+                foreach (var img in imgs)
+                {
+                    var src = img.Attributes["src"]?.Value;
+                    if (!string.IsNullOrEmpty(src) && (src.Contains(".jpg") || src.Contains(".png")) && !src.Contains("compressed") && !src.Contains("optimized"))
+                    {
+                        issues.Add(new Issue
+                        {
+                            Type = "Unoptimized Images",
+                            ElementSnippet = img.OuterHtml,
+                            SuggestedFix = "Use compressed images, modern formats (WebP/AVIF)",
+                            SeverityLevel = Severity.Info,
+                            FixExample = "Convert to WebP, enable compression",
+                            Category = Category.Environment
+                        });
+                        break; // Only report once
+                    }
+                }
+            }
+
+            return issues;
+        }
+
+        private List<Issue> CheckSafety(HtmlDocument doc, PageLoadResult loadResult, string? url)
+        {
+            var issues = new List<Issue>();
+
+            // Check for HTTPS (basic check - since we load via HTTP, this is limited)
+            if (!string.IsNullOrEmpty(url) && url.StartsWith("http://"))
+            {
+                issues.Add(new Issue
+                {
+                    Type = "HTTP Instead of HTTPS",
+                    ElementSnippet = $"URL: {url}",
+                    SuggestedFix = "Implement HTTPS for secure connections",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "Get SSL certificate, redirect HTTP to HTTPS",
+                    Category = Category.Safety
+                });
+            }
+
+            // Check for mixed content (basic detection)
+            var scripts = doc.DocumentNode.SelectNodes("//script[@src]");
+            var links = doc.DocumentNode.SelectNodes("//link[@href]");
+            var mixedContent = false;
+
+            if (scripts != null)
+            {
+                foreach (var script in scripts)
+                {
+                    var src = script.Attributes["src"]?.Value;
+                    if (!string.IsNullOrEmpty(src) && src.StartsWith("http://"))
+                    {
+                        mixedContent = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!mixedContent && links != null)
+            {
+                foreach (var link in links)
+                {
+                    var href = link.Attributes["href"]?.Value;
+                    if (!string.IsNullOrEmpty(href) && href.StartsWith("http://"))
+                    {
+                        mixedContent = true;
+                        break;
+                    }
+                }
+            }
+
+            if (mixedContent)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Mixed Content",
+                    ElementSnippet = "HTTP resources on HTTPS page",
+                    SuggestedFix = "Use HTTPS for all resources",
+                    SeverityLevel = Severity.Error,
+                    FixExample = "Update resource URLs to HTTPS",
+                    Category = Category.Safety
+                });
+            }
+
+            // Check for potentially unsafe practices
+            var forms = doc.DocumentNode.SelectNodes("//form");
+            if (forms != null)
+            {
+                foreach (var form in forms)
+                {
+                    var action = form.Attributes["action"]?.Value;
+                    var method = form.Attributes["method"]?.Value?.ToLower();
+
+                    if (string.IsNullOrEmpty(method) || method == "get")
+                    {
+                        issues.Add(new Issue
+                        {
+                            Type = "Form Uses GET Method",
+                            ElementSnippet = form.OuterHtml,
+                            SuggestedFix = "Use POST for sensitive data",
+                            SeverityLevel = Severity.Info,
+                            FixExample = "<form method=\"post\">",
+                            Category = Category.Safety
+                        });
+                    }
+                }
+            }
+
+            // Check for external links without security attributes
+            var externalLinks = doc.DocumentNode.SelectNodes("//a[@href]");
+            if (externalLinks != null)
+            {
+                foreach (var link in externalLinks)
+                {
+                    var href = link.Attributes["href"]?.Value;
+                    if (!string.IsNullOrEmpty(href) && href.StartsWith("http") && !string.IsNullOrEmpty(url) && !href.Contains(new Uri(url).Host))
+                    {
+                        if (!link.Attributes.Contains("rel") || !link.Attributes["rel"].Value.Contains("noopener"))
+                        {
+                            issues.Add(new Issue
+                            {
+                                Type = "External Link Without Security",
+                                ElementSnippet = link.OuterHtml,
+                                SuggestedFix = "Add rel=\"noopener noreferrer\" to external links",
+                                SeverityLevel = Severity.Warning,
+                                FixExample = "<a href=\"...\" rel=\"noopener noreferrer\">",
+                                Category = Category.Safety
+                            });
+                        }
+                        break; // Only report once
+                    }
+                }
+            }
+
+            return issues;
         }
 
         private double GetLuminance((double r, double g, double b) color)
