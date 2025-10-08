@@ -14,11 +14,20 @@ Features:
 - Export reports in TXT, PDF, and W3C-compliant HTML formats
 - Visual charts showing accessibility scores
 - Color-coded results by category and severity
+- Improved scoring algorithm aligned with industry standards (Lighthouse-style)
+
+Scoring Algorithm Improvements (v2.0):
+- More nuanced scoring: Critical issues (-3 points), Warnings (-1 point), Volume penalties
+- Modern accessibility patterns: aria-label, aria-labelledby support
+- Context-aware checks: Decorative images, wrapped labels, CSS limitations noted
+- Realistic severity levels: Many checks changed from Error to Warning/Info
+- Better alignment with Google Lighthouse accessibility scoring
 
 System Requirements:
 - Windows 10 or later (64-bit)
 - No additional software installation required
 
-File Size: ~70MB (includes all necessary runtime components)
+File Size: ~128MB (includes all necessary runtime components)
 
 Created with .NET 9.0 and published as a self-contained application.
+Version 2.0 - Improved scoring algorithm for better real-world accuracy.

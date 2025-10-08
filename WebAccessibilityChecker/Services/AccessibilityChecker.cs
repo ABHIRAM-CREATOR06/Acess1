@@ -40,12 +40,19 @@ namespace WebAccessibilityChecker.Services
             // Add performance issues
             report.Issues.AddRange(CheckPerformance(loadResult));
 
-            // Calculate scores
+            // Calculate scores (aligned with Lighthouse-style scoring)
             var accessibilityIssues = report.Issues.Where(i => i.Category == Category.Accessibility).ToList();
-            int accPenalty = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Error) * 10 +
-                              accessibilityIssues.Count(i => i.SeverityLevel == Severity.Warning) * 5 +
-                              accessibilityIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
-            report.AccessibilityScore = Math.Max(0, 100 - accPenalty);
+            int totalIssues = accessibilityIssues.Count;
+            int criticalIssues = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Error);
+            int warningIssues = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Warning);
+
+            // More nuanced scoring: base score of 100, deduct based on severity and impact
+            double baseScore = 100.0;
+            double criticalPenalty = criticalIssues * 3.0; // Critical issues have bigger impact
+            double warningPenalty = warningIssues * 1.0;  // Warnings have smaller impact
+            double volumePenalty = Math.Max(0, totalIssues - 10) * 0.5; // Volume penalty for many issues
+
+            report.AccessibilityScore = (int)Math.Max(0, Math.Min(100, baseScore - criticalPenalty - warningPenalty - volumePenalty));
 
             // Calculate performance score
             var performanceIssues = report.Issues.Where(i => i.Category == Category.Performance).ToList();
@@ -194,14 +201,30 @@ namespace WebAccessibilityChecker.Services
             {
                 foreach (var img in imgs)
                 {
-                    if (!img.Attributes.Contains("alt") || string.IsNullOrEmpty(img.Attributes["alt"].Value))
+                    // Check if image has alt attribute
+                    bool hasAlt = img.Attributes.Contains("alt");
+                    string altValue = hasAlt ? img.Attributes["alt"].Value : "";
+
+                    // Check for aria-label as alternative
+                    bool hasAriaLabel = img.Attributes.Contains("aria-label") && !string.IsNullOrEmpty(img.Attributes["aria-label"].Value);
+                    bool hasAriaLabelledBy = img.Attributes.Contains("aria-labelledby") && !string.IsNullOrEmpty(img.Attributes["aria-labelledby"].Value);
+
+                    // Check if it's a decorative/presentational image
+                    bool isDecorative = img.Attributes.Contains("role") && img.Attributes["role"].Value == "presentation";
+                    bool hasEmptyAlt = hasAlt && string.IsNullOrEmpty(altValue.Trim());
+
+                    // Only flag as issue if:
+                    // 1. No alt attribute at all AND no aria-label/labelledby AND not marked as decorative
+                    // 2. Has alt but it's just whitespace (should be empty string for decorative)
+                    if ((!hasAlt && !hasAriaLabel && !hasAriaLabelledBy && !isDecorative) ||
+                        (hasAlt && string.IsNullOrWhiteSpace(altValue) && !isDecorative))
                     {
                         issues.Add(new Issue
                         {
                             Type = "Missing Alt Text",
                             ElementSnippet = img.OuterHtml,
-                            SuggestedFix = "Add alt attribute to img tag",
-                            SeverityLevel = Severity.Error,
+                            SuggestedFix = "Add alt attribute describing the image, or use alt='' for decorative images",
+                            SeverityLevel = Severity.Warning, // Changed from Error to Warning
                             FixExample = "<img src='image.jpg' alt='Description of image'>",
                             Category = Category.Accessibility
                         });
@@ -214,27 +237,49 @@ namespace WebAccessibilityChecker.Services
         private List<Issue> CheckLabels(HtmlDocument doc)
         {
             var issues = new List<Issue>();
-            var inputs = doc.DocumentNode.SelectNodes("//input");
+            var inputs = doc.DocumentNode.SelectNodes("//input | //select | //textarea");
             if (inputs != null)
             {
                 foreach (var input in inputs)
                 {
                     var id = input.Attributes["id"]?.Value;
+                    var type = input.Attributes["type"]?.Value?.ToLower();
+
+                    // Skip hidden, submit, button, and other input types that don't need labels
+                    if (type == "hidden" || type == "submit" || type == "button" || type == "image")
+                        continue;
+
+                    // Check for associated label
+                    bool hasLabel = false;
                     if (!string.IsNullOrEmpty(id))
                     {
                         var label = doc.DocumentNode.SelectSingleNode($"//label[@for='{id}']");
-                        if (label == null)
+                        hasLabel = label != null;
+                    }
+
+                    // Check for aria-label
+                    bool hasAriaLabel = input.Attributes.Contains("aria-label") &&
+                                       !string.IsNullOrEmpty(input.Attributes["aria-label"].Value);
+
+                    // Check for aria-labelledby
+                    bool hasAriaLabelledBy = input.Attributes.Contains("aria-labelledby") &&
+                                            !string.IsNullOrEmpty(input.Attributes["aria-labelledby"].Value);
+
+                    // Check if input is inside a label element
+                    bool isWrappedInLabel = input.ParentNode != null && input.ParentNode.Name == "label";
+
+                    // Only flag as issue if no accessible label method is present
+                    if (!hasLabel && !hasAriaLabel && !hasAriaLabelledBy && !isWrappedInLabel)
+                    {
+                        issues.Add(new Issue
                         {
-                            issues.Add(new Issue
-                            {
-                                Type = "Missing Label",
-                                ElementSnippet = input.OuterHtml,
-                                SuggestedFix = "Add label with for attribute",
-                                SeverityLevel = Severity.Error,
-                                FixExample = "<label for='inputId'>Label text</label><input id='inputId' type='text'>",
-                                Category = Category.Accessibility
-                            });
-                        }
+                            Type = "Missing Label",
+                            ElementSnippet = input.OuterHtml,
+                            SuggestedFix = "Add label with for attribute, aria-label, or wrap in label element",
+                            SeverityLevel = Severity.Warning, // Changed from Error to Warning
+                            FixExample = "<label for='inputId'>Label text</label><input id='inputId' type='text'>",
+                            Category = Category.Accessibility
+                        });
                     }
                 }
             }
@@ -264,25 +309,48 @@ namespace WebAccessibilityChecker.Services
         {
             var issues = new List<Issue>();
             var headings = doc.DocumentNode.SelectNodes("//h1 | //h2 | //h3 | //h4 | //h5 | //h6");
-            if (headings != null)
+            if (headings != null && headings.Count > 1)
             {
                 int lastLevel = 0;
+                int skipCount = 0;
                 foreach (var h in headings)
                 {
                     int level = int.Parse(h.Name.Substring(1));
-                    if (level > lastLevel + 1)
+
+                    // Allow some flexibility - only flag if skipping more than 1 level AND it's not the first heading
+                    if (lastLevel > 0 && level > lastLevel + 1)
                     {
-                        issues.Add(new Issue
+                        skipCount++;
+                        // Only report the first few skips to avoid spam
+                        if (skipCount <= 3)
                         {
-                            Type = "Heading Hierarchy",
-                            ElementSnippet = h.OuterHtml,
-                            SuggestedFix = "Ensure headings follow logical order",
-                            SeverityLevel = Severity.Warning,
-                            FixExample = "Use h1, then h2, etc.",
-                            Category = Category.Accessibility
-                        });
+                            issues.Add(new Issue
+                            {
+                                Type = "Heading Hierarchy Skip",
+                                ElementSnippet = h.OuterHtml,
+                                SuggestedFix = "Consider using intermediate heading levels for better structure",
+                                SeverityLevel = Severity.Info, // Changed from Warning to Info - heading skips are common and often acceptable
+                                FixExample = $"Use h{lastLevel + 1} before jumping to h{level}",
+                                Category = Category.Accessibility
+                            });
+                        }
                     }
                     lastLevel = level;
+                }
+
+                // Check for missing h1
+                bool hasH1 = headings.Any(h => h.Name == "h1");
+                if (!hasH1)
+                {
+                    issues.Add(new Issue
+                    {
+                        Type = "Missing H1 Heading",
+                        ElementSnippet = "<body>",
+                        SuggestedFix = "Add an h1 element as the main page heading",
+                        SeverityLevel = Severity.Warning,
+                        FixExample = "<h1>Main Page Title</h1>",
+                        Category = Category.Accessibility
+                    });
                 }
             }
             return issues;
@@ -308,10 +376,10 @@ namespace WebAccessibilityChecker.Services
                             {
                                 issues.Add(new Issue
                                 {
-                                    Type = "Low Color Contrast",
+                                    Type = "Low Color Contrast (Inline Styles)",
                                     ElementSnippet = el.OuterHtml,
-                                    SuggestedFix = "Increase contrast ratio to at least 4.5:1",
-                                    SeverityLevel = Severity.Warning,
+                                    SuggestedFix = "Increase contrast ratio to at least 4.5:1. Note: This check only covers inline styles; external CSS contrast should be verified manually.",
+                                    SeverityLevel = Severity.Info, // Changed from Warning to Info since we can't check external CSS
                                     FixExample = "Use darker text on lighter background",
                                     Category = Category.Accessibility
                                 });
@@ -320,6 +388,21 @@ namespace WebAccessibilityChecker.Services
                     }
                 }
             }
+
+            // Add a general note about CSS contrast checking limitation
+            if (issues.Count == 0)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Color Contrast Check Limited",
+                    ElementSnippet = "Note: Contrast checking is limited to inline styles only",
+                    SuggestedFix = "For complete contrast analysis, manually check external CSS stylesheets",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "Use browser dev tools or automated contrast checkers for CSS styles",
+                    Category = Category.Accessibility
+                });
+            }
+
             return issues;
         }
 
@@ -336,25 +419,25 @@ namespace WebAccessibilityChecker.Services
                     {
                         var fontSize = ExtractFontSize(style);
                         var lineHeight = ExtractLineHeight(style);
-                        if (fontSize < 14)
+                        if (fontSize > 0 && fontSize < 14)
                         {
                             issues.Add(new Issue
                             {
-                                Type = "Small Font Size",
+                                Type = "Small Font Size (Inline Styles)",
                                 ElementSnippet = el.OuterHtml,
-                                SuggestedFix = "Increase font size to at least 14px",
-                                SeverityLevel = Severity.Warning,
+                                SuggestedFix = "Consider increasing font size for better readability. Note: This only checks inline styles.",
+                                SeverityLevel = Severity.Info, // Changed from Warning to Info
                                 FixExample = "font-size: 16px;",
                                 Category = Category.Accessibility
                             });
                         }
-                        if (lineHeight < 1.5)
+                        if (lineHeight > 0 && lineHeight < 1.4) // Relaxed from 1.5 to 1.4
                         {
                             issues.Add(new Issue
                             {
-                                Type = "Low Line Height",
+                                Type = "Tight Line Spacing (Inline Styles)",
                                 ElementSnippet = el.OuterHtml,
-                                SuggestedFix = "Increase line height to at least 1.5",
+                                SuggestedFix = "Consider increasing line height for better readability. Note: This only checks inline styles.",
                                 SeverityLevel = Severity.Info,
                                 FixExample = "line-height: 1.6;",
                                 Category = Category.Accessibility
@@ -363,6 +446,21 @@ namespace WebAccessibilityChecker.Services
                     }
                 }
             }
+
+            // Add note about CSS limitations
+            if (issues.Count == 0)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Typography Check Limited",
+                    ElementSnippet = "Note: Font and spacing checks are limited to inline styles only",
+                    SuggestedFix = "For complete typography analysis, manually check external CSS stylesheets",
+                    SeverityLevel = Severity.Info,
+                    FixExample = "Use browser dev tools to inspect computed styles",
+                    Category = Category.Accessibility
+                });
+            }
+
             return issues;
         }
 
