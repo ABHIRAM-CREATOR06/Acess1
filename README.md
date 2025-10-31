@@ -224,5 +224,6 @@ For issues, questions, or feature requests:
 - Review the technical documentation
 
 ---
-
+<br>Please do checkout our [A11Y: LAZY EDITION](https://github.com/ABHIRAM-CREATOR06/a11y-check) where developer could check accessibity right in process of development in vscode.<br>
+<br> <br>
 **Made with ❤️ for a more accessible web**
