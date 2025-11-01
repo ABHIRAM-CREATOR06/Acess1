@@ -7,7 +7,7 @@ Only the latest version of the application is supported with security updates.
 If you discover a security vulnerability, please report it to us immediately. Do not file a public issue.
 
 ### How to Report
-1. Email the details to [security@example.com](mailto:anonymouspanda144@gmail.com).
+1. Email the details to [anonymouspanda144@gmail.com](mailto:anonymouspanda144@gmail.com).
 2. Include a detailed description of the vulnerability.
 3. Provide steps to reproduce the issue (if applicable).
 4. Attach any relevant logs or screenshots.
