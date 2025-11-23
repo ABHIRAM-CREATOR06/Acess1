@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Equations Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Accessibility Equations Calculator</h1>
+        <p>Calculate various accessibility metrics using the implemented equations.</p>
+
+        <div class="calculator-section">
+            <h2>1. Accessibility Score (Penalty Model)</h2>
+            <div class="input-group">
+                <label>Error Count: <input type="number" id="errorCount" min="0" value="0"></label>
+                <label>Warning Count: <input type="number" id="warningCount" min="0" value="0"></label>
+                <label>Info Count: <input type="number" id="infoCount" min="0" value="0"></label>
+                <button onclick="calculateAccessibilityScore()">Calculate</button>
+            </div>
+            <div class="result">Score: <span id="accessibilityScore">-</span></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>2. WCAG Color Contrast Ratio</h2>
+            <div class="input-group">
+                <label>Luminance 1: <input type="number" id="lum1" step="0.01" min="0" max="1" value="0.5"></label>
+                <label>Luminance 2: <input type="number" id="lum2" step="0.01" min="0" max="1" value="0.2"></label>
+                <button onclick="calculateContrastRatio()">Calculate</button>
+            </div>
+            <div class="result">Contrast Ratio: <span id="contrastRatio">-</span></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>3. Relative Luminance</h2>
+            <div class="input-group">
+                <label>R: <input type="number" id="r" min="0" max="1" step="0.01" value="0.5"></label>
+                <label>G: <input type="number" id="g" min="0" max="1" step="0.01" value="0.5"></label>
+                <label>B: <input type="number" id="b" min="0" max="1" step="0.01" value="0.5"></label>
+                <button onclick="calculateRelativeLuminance()">Calculate</button>
+            </div>
+            <div class="result">Relative Luminance: <span id="relativeLuminance">-</span></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>4. sRGB to Linear RGB</h2>
+            <div class="input-group">
+                <label>sRGB Value: <input type="number" id="srgb" min="0" max="1" step="0.01" value="0.5"></label>
+                <button onclick="calculateSRGBToLinear()">Calculate</button>
+            </div>
+            <div class="result">Linear RGB: <span id="linearRGB">-</span></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>5. Hex to RGB</h2>
+            <div class="input-group">
+                <label>Hex Color: <input type="text" id="hexColor" value="#808080" placeholder="#RRGGBB"></label>
+                <button onclick="calculateHexToRGB()">Calculate</button>
+            </div>
+            <div class="result">RGB: <span id="rgbValues">-</span></div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>6-7. ML Metrics</h2>
+            <div class="input-group">
+                <label>True Positives: <input type="number" id="tp" min="0" value="10"></label>
+                <label>False Positives: <input type="number" id="fp" min="0" value="2"></label>
+                <label>True Negatives: <input type="number" id="tn" min="0" value="8"></label>
+                <label>False Negatives: <input type="number" id="fn" min="0" value="1"></label>
+                <button onclick="calculateMLMetrics()">Calculate</button>
+            </div>
+            <div class="result">
+                Precision: <span id="precision">-</span><br>
+                Recall: <span id="recall">-</span><br>
+                F1: <span id="f1">-</span><br>
+                FPR: <span id="fpr">-</span><br>
+                FNR: <span id="fnr">-</span>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>8-13. Tool Ensemble Metrics</h2>
+            <div class="input-group">
+                <label>Tool A Issues (comma-separated): <input type="text" id="issuesA" value="issue1,issue2,issue3"></label>
+                <label>Tool B Issues (comma-separated): <input type="text" id="issuesB" value="issue2,issue3,issue4"></label>
+                <label>Ensemble Issues (comma-separated): <input type="text" id="ensembleIssues" value="issue1,issue2,issue3,issue4"></label>
+                <label>New Ensemble Issues (comma-separated): <input type="text" id="newEnsembleIssues" value="issue1,issue2,issue3,issue4,issue5"></label>
+                <label>All Issues (comma-separated): <input type="text" id="allIssues" value="issue1,issue2,issue3,issue4,issue5,issue6"></label>
+                <label>Cost of Tool: <input type="number" id="costT" min="0" step="0.01" value="1.0"></label>
+                <button onclick="calculateEnsembleMetrics()">Calculate</button>
+            </div>
+            <div class="result">
+                Jaccard Similarity: <span id="jaccard">-</span><br>
+                Complementarity: <span id="complementarity">-</span><br>
+                Marginal Gain: <span id="marginalGain">-</span><br>
+                Coverage: <span id="coverage">-</span><br>
+                Cost per New Issue: <span id="costPerNew">-</span>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>14-18. Composite & Other Metrics</h2>
+            <div class="input-group">
+                <label>SRCI 100: <input type="number" id="srci100" value="85"></label>
+                <label>W 100: <input type="number" id="w100" value="90"></label>
+                <label>Alpha: <input type="number" id="alpha" min="0" max="1" step="0.01" value="0.5"></label>
+                <label>Score 1: <input type="number" id="score1" value="90"></label>
+                <label>Score 0: <input type="number" id="score0" value="80"></label>
+                <label>Time: <input type="number" id="time" min="0" step="0.01" value="30"></label>
+                <label>Failures: <input type="number" id="failures" min="0" value="5"></label>
+                <label>Elements: <input type="number" id="elements" min="0" value="1000"></label>
+                <button onclick="calculateCompositeMetrics()">Calculate</button>
+            </div>
+            <div class="result">
+                Composite AI: <span id="compositeAI">-</span><br>
+                Improvement Rate: <span id="improvementRate">-</span><br>
+                Failures per 1000: <span id="failuresPerK">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="equations.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
