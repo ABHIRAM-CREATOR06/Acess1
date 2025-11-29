@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIS-CORE - Multi-Platform Web Accessibility SDK</title>
+    <meta name="description" content="AXIS-CORE is a comprehensive multi-platform SDK ecosystem for programmatic web accessibility checking with WCAG 2.1 compliance.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-universal-access"></i>
+                <span>AXIS-CORE</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="active">Home</a>
+                <a href="#sdks">SDKs</a>
+                <a href="#demo">Demo</a>
+                <a href="#docs">Docs</a>
+                <a href="#about">About</a>
+            </div>
+            <div class="nav-actions">
+                <a href="https://github.com/ABHIRAM-CREATOR06/Acess1" class="btn btn-outline" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AXIS-CORE</span>
+                    <br>Multi-Platform Accessibility SDK
+                </h1>
+                <p class="hero-subtitle">
+                    Make web accessibility accessible to developers. Comprehensive WCAG 2.1 compliance checking
+                    across .NET, JavaScript, and Rust with consistent APIs and exceptional performance.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">SDK Platforms</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Accessibility Checks</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Published Packages</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">WCAG 2.1 Compliant</div>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a href="#sdks" class="btn btn-primary btn-lg">
+                        <i class="fas fa-download"></i> Get Started
+                    </a>
+                    <a href="#demo" class="btn btn-outline btn-lg">
+                        <i class="fas fa-play"></i> Try Demo
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-preview">
+                    <div class="code-header">
+                        <span class="language-badge">JavaScript</span>
+                        <span class="language-badge">.NET</span>
+                        <span class="language-badge">Rust</span>
+                    </div>
+                    <pre class="code-content"><code>const checker = new AxisCore();
+const report = await checker.checkUrl('https://example.com');
+
+console.log(`Score: ${report.accessibilityScore}/100`);
+console.log(`Status: ${report.complianceStatus}`);</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SDKs Section -->
+    <section id="sdks" class="sdks">
+        <div class="container">
+            <div class="section-header">
+                <h2>Multi-Platform SDK Ecosystem</h2>
+                <p>Consistent APIs across all major platforms with native performance</p>
+            </div>
+
+            <div class="sdks-grid">
+                <!-- .NET SDK -->
+                <div class="sdk-card featured">
+                    <div class="sdk-header">
+                        <div class="sdk-icon">
+                            <i class="fab fa-microsoft"></i>
+                        </div>
+                        <div class="sdk-status published">
+                            <i class="fas fa-check-circle"></i> Published
+                        </div>
+                    </div>
+                    <div class="sdk-content">
+                        <h3>AXIS-CORE .NET</h3>
+                        <p>Full-featured accessibility checking with environmental impact analysis for .NET applications.</p>
+                        <div class="sdk-features">
+                            <span class="feature-tag">WCAG 2.1</span>
+                            <span class="feature-tag">Environmental</span>
+                            <span class="feature-tag">PDF Export</span>
+                        </div>
+                        <div class="sdk-install">
+                            <code>dotnet add package AXIS-CORE</code>
+                        </div>
+                        <div class="sdk-links">
+                            <a href="https://www.nuget.org/packages/AXIS-CORE/" class="btn btn-sm" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> NuGet
+                            </a>
+                            <a href="AXIS-CORE/README.md" class="btn btn-outline btn-sm">
+                                <i class="fas fa-book"></i> Docs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JavaScript SDK -->
+                <div class="sdk-card featured">
+                    <div class="sdk-header">
+                        <div class="sdk-icon">
+                            <i class="fab fa-js-square"></i>
+                        </div>
+                        <div class="sdk-status published">
+                            <i class="fas fa-check-circle"></i> Published
+                        </div>
+                    </div>
+                    <div class="sdk-content">
+                        <h3>axis-core-sdk</h3>
+                        <p>Puppeteer-powered accessibility checking for Node.js applications with browser automation.</p>
+                        <div class="sdk-features">
+                            <span class="feature-tag">Puppeteer</span>
+                            <span class="feature-tag">Async</span>
+                            <span class="feature-tag">Browser</span>
+                        </div>
+                        <div class="sdk-install">
+                            <code>npm install axis-core-sdk</code>
+                        </div>
+                        <div class="sdk-links">
+                            <a href="https://www.npmjs.com/package/axis-core-sdk" class="btn btn-sm" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> npm
+                            </a>
+                            <a href="axis-core-js/README.md" class="btn btn-outline btn-sm">
+                                <i class="fas fa-book"></i> Docs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rust SDK -->
+                <div class="sdk-card">
+                    <div class="sdk-header">
+                        <div class="sdk-icon">
+                            <i class="fab fa-rust"></i>
+                        </div>
+                        <div class="sdk-status ready">
+                            <i class="fas fa-clock"></i> Ready
+                        </div>
+                    </div>
+                    <div class="sdk-content">
+                        <h3>axis-core</h3>
+                        <p>Memory-safe, high-performance accessibility checking with zero-cost abstractions.</p>
+                        <div class="sdk-features">
+                            <span class="feature-tag">Memory Safe</span>
+                            <span class="feature-tag">Async</span>
+                            <span class="feature-tag">Performance</span>
+                        </div>
+                        <div class="sdk-install">
+                            <code>cargo add axis-core</code>
+                        </div>
+                        <div class="sdk-links">
+                            <a href="axis-core-rs/README.md" class="btn btn-outline btn-sm">
+                                <i class="fas fa-book"></i> Docs
+                            </a>
+                            <button class="btn btn-sm" onclick="showPublishModal('Rust')">
+                                <i class="fas fa-rocket"></i> Publish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>Try AXIS-CORE Live</h2>
+                <p>Test accessibility checking with real websites</p>
+            </div>
+
+            <div class="demo-container">
+                <div class="demo-input">
+                    <div class="input-group">
+                        <input type="url" id="demo-url" placeholder="https://example.com" value="https://example.com">
+                        <button id="check-btn" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Check Accessibility
+                        </button>
+                    </div>
+                    <div class="demo-options">
+                        <label class="option">
+                            <input type="checkbox" id="include-environmental" checked>
+                            Include Environmental Impact
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" id="detailed-report" checked>
+                            Detailed Report
+                        </label>
+                    </div>
+                </div>
+
+                <div class="demo-results" id="demo-results" style="display: none;">
+                    <div class="results-header">
+                        <h3>Accessibility Report</h3>
+                        <div class="score-display">
+                            <div class="score-circle" id="score-circle">
+                                <span id="score-text">85</span>
+                            </div>
+                            <div class="score-info">
+                                <div class="compliance-status" id="compliance-status">Mostly Compliant</div>
+                                <div class="score-label">Accessibility Score</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="results-content">
+                        <div class="issues-summary">
+                            <div class="issue-stat">
+                                <span class="issue-count" id="error-count">1</span>
+                                <span class="issue-label">Errors</span>
+                            </div>
+                            <div class="issue-stat">
+                                <span class="issue-count" id="warning-count">2</span>
+                                <span class="issue-label">Warnings</span>
+                            </div>
+                            <div class="issue-stat">
+                                <span class="issue-count" id="info-count">0</span>
+                                <span class="issue-label">Info</span>
+                            </div>
+                        </div>
+
+                        <div class="issues-list" id="issues-list">
+                            <div class="issue-item error">
+                                <div class="issue-header">
+                                    <span class="issue-type">Missing Alt Text</span>
+                                    <span class="issue-severity">Error</span>
+                                </div>
+                                <p class="issue-description">Add alt attribute describing the image</p>
+                            </div>
+                            <div class="issue-item warning">
+                                <div class="issue-header">
+                                    <span class="issue-type">Missing Viewport Meta</span>
+                                    <span class="issue-severity">Warning</span>
+                                </div>
+                                <p class="issue-description">Add viewport meta tag for mobile responsiveness</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Powerful Features</h2>
+                <p>Everything you need for comprehensive accessibility auditing</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-universal-access"></i>
+                    </div>
+                    <h3>WCAG 2.1 Compliance</h3>
+                    <p>Automated checking against Web Content Accessibility Guidelines 2.1 with detailed compliance reporting.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Multi-Platform</h3>
+                    <p>Consistent APIs across .NET, JavaScript, and Rust with native performance optimizations.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Environmental Impact</h3>
+                    <p>Calculate energy consumption and CO₂ emissions to promote sustainable web development.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Intelligent Scoring</h3>
+                    <p>Advanced scoring algorithm providing 0-100 accessibility scores with actionable insights.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Export Reports</h3>
+                    <p>Generate detailed TXT and PDF reports for documentation and compliance requirements.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>High Performance</h3>
+                    <p>Optimized implementations with async support and memory-efficient processing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Docs Section -->
+    <section id="docs" class="docs">
+        <div class="container">
+            <div class="section-header">
+                <h2>Documentation & Resources</h2>
+                <p>Comprehensive guides and resources for developers</p>
+            </div>
+
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>SDK Documentation</h3>
+                    <p>Complete API reference and integration guides for all platforms.</p>
+                    <a href="AXIS-CORE-SDK-DOCS.md" class="btn btn-outline">Read Docs</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Code Examples</h3>
+                    <p>Practical examples and integration patterns for real-world usage.</p>
+                    <a href="#sdks" class="btn btn-outline">View Examples</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>Source Code</h3>
+                    <p>Access the complete source code and contribute to the project.</p>
+                    <a href="https://github.com/ABHIRAM-CREATOR06/Acess1" class="btn btn-outline" target="_blank">GitHub</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3>FAQ & Support</h3>
+                    <p>Common questions and troubleshooting guides.</p>
+                    <a href="#about" class="btn btn-outline">Get Help</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About AXIS-CORE</h2>
+                <p>Making web accessibility accessible to developers worldwide</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Our Mission</h3>
+                    <p>
+                        AXIS-CORE was born from the vision to make web accessibility a fundamental part of software development.
+                        We believe that accessibility should be built-in, not bolted-on, and that developers should have the tools
+                        to create inclusive web experiences from the start.
+                    </p>
+
+                    <h3>Why AXIS-CORE?</h3>
+                    <ul>
+                        <li><strong>Consistent APIs:</strong> Same interface across all platforms</li>
+                        <li><strong>Production Ready:</strong> Thoroughly tested and optimized</li>
+                        <li><strong>Performance Focused:</strong> Fast, efficient implementations</li>
+                        <li><strong>Developer Friendly:</strong> Simple integration with comprehensive error handling</li>
+                        <li><strong>Future Proof:</strong> Extensible architecture for new standards</li>
+                    </ul>
+
+                    <h3>Standards Compliance</h3>
+                    <p>
+                        AXIS-CORE implements comprehensive checking against:
+                    </p>
+                    <div class="standards-list">
+                        <span class="standard">WCAG 2.1</span>
+                        <span class="standard">Section 508</span>
+                        <span class="standard">EN 301 549</span>
+                    </div>
+                </div>
+
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">8,876+</div>
+                        <div class="stat-label">Lines of Code</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">SDK Platforms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Documentation Lines</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Accessibility Checks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-universal-access"></i>
+                        <span>AXIS-CORE</span>
+                    </div>
+                    <p>Making web accessibility accessible to developers worldwide.</p>
+                    <div class="social-links">
+                        <a href="https://github.com/ABHIRAM-CREATOR06/Acess1" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.nuget.org/packages/AXIS-CORE/" target="_blank">
+                            <i class="fas fa-box"></i>
+                        </a>
+                        <a href="https://www.npmjs.com/package/axis-core-sdk" target="_blank">
+                            <i class="fab fa-npm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>SDKs</h4>
+                    <ul>
+                        <li><a href="AXIS-CORE/README.md">AXIS-CORE .NET</a></li>
+                        <li><a href="axis-core-js/README.md">axis-core-sdk JavaScript</a></li>
+                        <li><a href="axis-core-rs/README.md">axis-core Rust</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="AXIS-CORE-SDK-DOCS.md">API Documentation</a></li>
+                        <li><a href="README.md">Main Documentation</a></li>
+                        <li><a href="#demo">Live Demo</a></li>
+                        <li><a href="https://github.com/ABHIRAM-CREATOR06/Acess1/issues" target="_blank">Report Issues</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/ABHIRAM-CREATOR06/Acess1" target="_blank">GitHub</a></li>
+                        <li><a href="https://github.com/ABHIRAM-CREATOR06/Acess1/discussions" target="_blank">Discussions</a></li>
+                        <li><a href="https://github.com/ABHIRAM-CREATOR06/Acess1/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+                        <li><a href="https://github.com/ABHIRAM-CREATOR06/Acess1/blob/main/LICENSE" target="_blank">License</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 AXIS-CORE. Made with ❤️ for a more accessible web.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for Publish Info -->
+    <div id="publish-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Publish SDK</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="rust-publish">
+                    <h4>Publishing axis-core to Crates.io</h4>
+                    <div class="code-block">
+                        <pre><code>cd axis-core-rs
+cargo login
+cargo publish</code></pre>
+                    </div>
+                    <p><strong>Status:</strong> Ready to publish - all tests pass, documentation complete.</p>
+                    <a href="axis-core-rs/README.md" class="btn btn-primary">View Rust SDK Docs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
