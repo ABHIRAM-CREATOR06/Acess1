@@ -1,141 +1,113 @@
 # AXIS-CORE SDK
 
-A powerful .NET library for automated web accessibility checking. Built to help developers ensure their websites meet WCAG 2.1 standards and provide a better experience for everyone.
+AXIS-CORE is a cross-platform SDK for programmatic web accessibility checking. It provides developers with tools to integrate accessibility audits into their applications, CI/CD pipelines, and automated testing workflows.
 
-## Quick Start
+## Features
 
-Install the package:
+- **URL Analysis**: Check any website for accessibility issues
+- **HTML Content Analysis**: Analyze local HTML strings
+- **WCAG Compliance**: Automated checks against WCAG 2.1 standards
+- **Real-time Scoring**: Get instant accessibility scores (0-100)
+- **Compliance Status**: Determine if content is Fully/Mostly/Partially/Not Compliant
+- **Export Options**: Generate TXT and PDF reports
+- **Cross-platform**: Available for .NET, JavaScript/Node.js, Python, and Rust
+
+## Installation
+
+### .NET
 ```bash
 dotnet add package AXIS-CORE
 ```
 
-Check a website:
+### JavaScript/Node.js
+```bash
+npm install axis-core
+```
+
+### Python
+```bash
+pip install axis-core
+```
+
+### Rust
+```toml
+[dependencies]
+axis-core = "1.0"
+```
+
+## Usage
+
+### .NET
 ```csharp
 using AXIS_CORE;
 
 var checker = new AxisCore();
-var report = await checker.CheckUrlAsync("https://yourwebsite.com");
-
+var report = await checker.CheckUrlAsync("https://example.com");
 Console.WriteLine($"Accessibility Score: {report.AccessibilityScore}/100");
-Console.WriteLine($"Issues Found: {report.TotalIssues}");
+Console.WriteLine($"Compliance: {report.ComplianceStatus}");
 ```
 
-## Why AXIS-CORE?
+### JavaScript/Node.js
+```javascript
+const { AxisCore } = require('axis-core');
 
-I built this because I kept running into the same accessibility issues on client projects. Manual checking was taking forever, and existing tools were either too expensive or too complicated. So I took the accessibility checker I made for my own use and turned it into a proper SDK.
-
-Now developers can catch accessibility problems early in development, integrate checks into CI/CD pipelines, and generate compliance reports automatically.
-
-## Features
-
-- **WCAG 2.1 Compliance**: Checks against all major accessibility guidelines
-- **URL & HTML Analysis**: Test live websites or raw HTML content
-- **Comprehensive Scoring**: Get detailed accessibility scores (0-100)
-- **Export Reports**: Generate TXT and PDF reports
-- **Environmental Impact**: Track CO₂ emissions and energy usage
-- **Fast & Reliable**: Built with performance in mind
-
-## Basic Usage
-
-### Check a Website
-```csharp
-var checker = new AxisCore();
-var report = await checker.CheckUrlAsync("https://example.com");
-
-if (report.AccessibilityScore >= 95) {
-    Console.WriteLine("Site is fully compliant!");
-} else if (report.AccessibilityScore >= 80) {
-    Console.WriteLine("Site is mostly compliant");
-} else {
-    Console.WriteLine("Site needs accessibility improvements");
-}
+const checker = new AxisCore();
+checker.checkUrl('https://example.com').then(report => {
+    console.log(`Accessibility Score: ${report.accessibilityScore}/100`);
+    console.log(`Compliance: ${report.complianceStatus}`);
+});
 ```
 
-### Check HTML Content
-```csharp
-var html = "<html><body><img src='test.jpg' /></body></html>";
-var report = checker.CheckHtml(html);
+### Rust
+```rust
+use axis_core::AxisCore;
 
-// Missing alt text will be flagged as an issue
-foreach (var issue in report.Issues) {
-    Console.WriteLine($"{issue.Type}: {issue.SuggestedFix}");
-}
+let checker = AxisCore::new();
+let report = checker.check_url("https://example.com").await?;
+println!("Accessibility Score: {}/100", report.accessibility_score);
+println!("Compliance: {}", report.compliance_status);
 ```
 
-### Export Reports
-```csharp
-var report = await checker.CheckUrlAsync("https://example.com");
+## API Reference
 
-// Get text report
-string textReport = checker.ExportToText(report);
-File.WriteAllText("accessibility-report.txt", textReport);
+### Methods
 
-// Get PDF report
-byte[] pdfBytes = checker.ExportToPdf(report);
-File.WriteAllBytes("accessibility-report.pdf", pdfBytes);
-```
+- `CheckUrlAsync(url)` / `checkUrl(url)` / `check_url(url)` / `check_url(url)`: Analyze a web page by URL
+- `CheckHtml(html, baseUrl?)` / `checkHtml(html, baseUrl?)` / `check_html(html, baseUrl?)` / `check_html(html, baseUrl?)`: Analyze HTML content
+- `ExportToText(report)` / `exportToText(report)` / `export_to_text(report)` / `export_to_text(report)`: Export report as text
+- `ExportToPdf(report)` / `exportToPdf(report)` / `export_to_pdf(report)` / `export_to_pdf(report)`: Export report as PDF bytes
 
-## Understanding the Results
+### Report Properties
 
-### Accessibility Score
-- **95-100**: Fully Compliant - Meets all WCAG guidelines
-- **80-94**: Mostly Compliant - Minor issues to address
-- **60-79**: Partially Compliant - Significant improvements needed
-- **<60**: Not Compliant - Major accessibility barriers present
+- `AccessibilityScore` / `accessibilityScore` / `accessibility_score`: Score from 0-100
+- `ComplianceStatus` / `complianceStatus` / `compliance_status`: "Fully Compliant", "Mostly Compliant", "Partially Compliant", or "Not Compliant"
+- `Issues` / `issues`: Array of accessibility issues found
+- `TotalIssues` / `totalIssues` / `total_issues`: Total number of issues
+- `ErrorCount` / `errorCount` / `error_count`: Number of error-level issues
+- `WarningCount` / `warningCount` / `warning_count`: Number of warning-level issues
+- `InfoCount` / `infoCount` / `info_count`: Number of info-level issues
 
-### Issue Categories
-- **Accessibility**: Core WCAG compliance issues
-- **SEO**: Search engine optimization problems
-- **Performance**: Speed and loading issues
-- **Environment**: Energy usage and carbon footprint
-- **Safety**: Security and privacy concerns
+## Checks Performed
 
-## Advanced Usage
+AXIS-CORE checks for:
 
-### Custom Analysis Options
-```csharp
-// The SDK is designed to be simple by default
-// but extensible for advanced use cases
-var checker = new AxisCore();
-
-// All configuration happens through the main API
-// Future versions will add more customization options
-```
-
-### CI/CD Integration
-```yaml
-# Add to your GitHub Actions workflow
-- name: Check Accessibility
-  run: |
-    dotnet test --filter "Accessibility"
-    # Or integrate directly in your build process
-```
-
-## Common Issues & Solutions
-
-**"Headless browser failed"**
-- This is normal on first run
-- The SDK falls back to HTTP download automatically
-- Chrome gets downloaded for future runs
-
-**"Slow analysis"**
-- Large sites take longer due to JavaScript rendering
-- Consider analyzing specific pages instead of entire sites
-- Use the HTML checking method for faster local testing
-
-**"False positives"**
-- Some issues might be flagged incorrectly
-- Always review results manually
-- The tool is designed to be thorough rather than perfect
-
-## Contributing
-
-Found a bug or want to suggest a feature? Open an issue on GitHub. I built this tool because I needed it, and I'm always looking to improve it.
+- Missing or improper alt text on images
+- Form labels and accessibility
+- Document title presence
+- Heading hierarchy structure
+- Color contrast ratios
+- Font size and line height (eye comfort)
+- ARIA attributes usage
+- Language attributes
+- WebXR accessibility considerations
+- Best practices
+- Mobile responsiveness
+- Dark mode support
 
 ## License
 
-GPL-3.0-or-later - Use it, modify it, share it. Just keep it open source.
+GPL-3.0-or-later License - see LICENSE file for details.
 
----
+## Contributing
 
-Built with ❤️ for a more accessible web
+Contributions are welcome! Please see the main repository for contribution guidelines.
