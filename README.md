@@ -255,7 +255,7 @@ console.log(`Score: ${report.accessibilityScore}/100`);
 ### Package Repositories (Coming Soon)
 Once published, the AXIS-CORE SDK will be available at:
 - [NuGet Package](https://www.nuget.org/packages/AXIS-CORE/) - .NET package
-- [npm Package](https://www.npmjs.com/package/axis-core) - JavaScript package
+- [npm Package](https://www.npmjs.com/package/axis-core-sdk) - JavaScript package
 - [PyPI Package](https://pypi.org/project/axis-core/) - Python package
 - [Crates.io](https://crates.io/crates/axis-core) - Rust crate
 
