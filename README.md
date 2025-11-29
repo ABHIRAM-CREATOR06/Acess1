@@ -232,7 +232,7 @@ AXIS-CORE is our comprehensive cross-platform SDK ecosystem that allows develope
 |-----|----------|--------|------------------|-------------|
 | **AXIS-CORE** | .NET C# | ✅ Published | [NuGet](https://www.nuget.org/packages/AXIS-CORE/) | Excellent |
 | **axis-core** | Rust | 🚀 Ready | [Crates.io](https://crates.io/crates/axis-core) | Exceptional |
-| **axis-core-sdk** | JavaScript | 📦 Ready | [npm](https://www.npmjs.com/package/axis-core-sdk) | Good |
+| **axis-core-sdk** | JavaScript | ✅ Published | [npm](https://www.npmjs.com/package/axis-core-sdk) | Good |
 
 ### ✨ Key Features
 

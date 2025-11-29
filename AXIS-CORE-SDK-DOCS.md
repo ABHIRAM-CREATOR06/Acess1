@@ -19,7 +19,7 @@ AXIS-CORE is a comprehensive, cross-platform SDK ecosystem for programmatic web 
 |----------|----------|--------|-----------------|
 | .NET | C# | ✅ Published | NuGet |
 | Rust | Rust | ✅ Ready | Cargo |
-| JavaScript | Node.js | ✅ Ready | npm |
+| JavaScript | Node.js | ✅ Published | npm |
 
 ## API Reference
 
