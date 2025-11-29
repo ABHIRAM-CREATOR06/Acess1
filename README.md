@@ -222,6 +222,10 @@ For issues, questions, or feature requests:
 - Create an issue on GitHub
 - Check the troubleshooting section
 - Review the technical documentation
+## 🌐 [AXIS-CORE Website](docs/website/index.html) - Interactive Demo & Documentation
+
+Visit our comprehensive website for an interactive demo, complete documentation, and detailed guides.
+
 ## 🔧 AXIS-CORE SDK - Multi-Platform Accessibility Checking
 
 AXIS-CORE is our comprehensive cross-platform SDK ecosystem that allows developers to integrate accessibility checking into their applications programmatically. Available for .NET, JavaScript/Node.js, and Rust with consistent APIs across all platforms.
