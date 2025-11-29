@@ -58,16 +58,6 @@ checker.checkUrl('https://example.com').then(report => {
 });
 ```
 
-### Python
-```python
-from axis_core import AxisCore
-
-checker = AxisCore()
-report = checker.check_url('https://example.com')
-print(f"Accessibility Score: {report.accessibility_score}/100")
-print(f"Compliance: {report.compliance_status}")
-```
-
 ### Rust
 ```rust
 use axis_core::AxisCore;
