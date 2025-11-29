@@ -5,6 +5,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Linq;
+using System;
 
 namespace AXIS_CORE.Utils
 {
@@ -472,7 +473,7 @@ namespace AXIS_CORE.Utils
             return sb.ToString();
         }
 
-        private string FormatBytes(long bytes)
+        private static string FormatBytes(long bytes)
         {
             string[] sizes = { "B", "KB", "MB", "GB" };
             int order = 0;

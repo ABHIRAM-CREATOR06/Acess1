@@ -1,0 +1,6 @@
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.csproj.AssemblyReference.cache
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.AssemblyInfoInputs.cache
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.AssemblyInfo.cs
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.csproj.CoreCompileInputs.cache
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\obj\Release\netstandard2.1\AXIS-CORE.sourcelink.json

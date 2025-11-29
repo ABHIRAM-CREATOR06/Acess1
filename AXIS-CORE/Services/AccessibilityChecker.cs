@@ -1,8 +1,10 @@
 using HtmlAgilityPack;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 using AXIS_CORE.Models;
 
-namespace WebAccessibilityChecker.Services
+namespace AXIS_CORE.Services
 {
     public class AccessibilityChecker
     {

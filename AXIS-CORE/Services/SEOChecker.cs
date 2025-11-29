@@ -2,6 +2,8 @@ using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
+using System;
 using AXIS_CORE.Models;
 
 namespace AXIS_CORE.Services
