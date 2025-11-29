@@ -253,7 +253,7 @@ console.log(`Score: ${report.accessibilityScore}/100`);
 - [AXIS-CORE README](AXIS-CORE/README.md) - Complete SDK documentation
 
 ### Package Repositories 
-Once published, the AXIS-CORE SDK will be available at:
+ The AXIS-CORE SDK will be available at:
 - [NuGet Package](https://www.nuget.org/packages/AXIS-CORE/) - .NET package
 - [npm Package](https://www.npmjs.com/package/axis-core-sdk) - JavaScript package
 - [Crates.io](https://crates.io/crates/axis-core) - Rust crate
