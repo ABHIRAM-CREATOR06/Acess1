@@ -10,7 +10,7 @@
 - [x] **Core SDK Ecosystem**
   - [x] AXIS-CORE .NET SDK (Published to NuGet)
   - [x] axis-core-sdk JavaScript (Published to npm)
-  - [x] axis-core Rust SDK (Ready for Crates.io)
+  - [x] axis-core Rust SDK (Published to Crates.io)
 - [x] **Desktop Application**
   - [x] WebAccessibilityChecker WPF app (Complete)
 - [x] **Documentation & Website**
@@ -29,10 +29,10 @@
 ## 🚀 Q1 2025: Expansion & Optimization
 
 ### 🔧 SDK Enhancements
-- [ ] **Publish Rust SDK to Crates.io**
-  - [ ] Complete final testing and documentation
-  - [ ] Set up automated publishing pipeline
-  - [ ] Add Rust examples to website
+- [x] **Publish Rust SDK to Crates.io** ✅ Completed
+  - [x] Complete final testing and documentation
+  - [x] Set up automated publishing pipeline
+  - [x] Add Rust examples to website
 
 - [ ] **SDK Performance Optimization**
   - [ ] Implement parallel processing for large sites

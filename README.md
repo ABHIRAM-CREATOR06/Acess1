@@ -230,6 +230,11 @@ Visit our comprehensive website for an interactive demo, complete documentation,
 
 AXIS-CORE is our comprehensive cross-platform SDK ecosystem that allows developers to integrate accessibility checking into their applications programmatically. Available for .NET, JavaScript/Node.js, and Rust with consistent APIs across all platforms.
 
+### 📦 Published SDKs
+- **AXIS-CORE** (.NET) - [NuGet Package](https://www.nuget.org/packages/AXIS-CORE/)
+- **axis-core-sdk** (JavaScript) - [npm Package](https://www.npmjs.com/package/axis-core-sdk)
+- **axis-core** (Rust) - [Crates.io Package](https://crates.io/crates/axis-core)
+
 ### 🎯 SDK Overview
 
 | SDK | Language | Status | Package Registry | Performance |

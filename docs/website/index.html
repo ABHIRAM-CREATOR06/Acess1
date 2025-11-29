@@ -54,7 +54,7 @@
                         <div class="stat-label">Accessibility Checks</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">2</div>
+                        <div class="stat-number">3</div>
                         <div class="stat-label">Published Packages</div>
                     </div>
                     <div class="stat">
@@ -167,8 +167,8 @@ console.log(`Status: ${report.complianceStatus}`);</code></pre>
                         <div class="sdk-icon">
                             <i class="fab fa-rust"></i>
                         </div>
-                        <div class="sdk-status ready">
-                            <i class="fas fa-clock"></i> Ready
+                        <div class="sdk-status published">
+                            <i class="fas fa-check-circle"></i> Published
                         </div>
                     </div>
                     <div class="sdk-content">
@@ -463,6 +463,9 @@ console.log(`Status: ${report.complianceStatus}`);</code></pre>
                         <a href="https://www.npmjs.com/package/axis-core-sdk" target="_blank">
                             <i class="fab fa-npm"></i>
                         </a>
+                        <a href="https://crates.io/crates/axis-core" target="_blank">
+                            <i class="fab fa-rust"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -511,14 +514,12 @@ console.log(`Status: ${report.complianceStatus}`);</code></pre>
             </div>
             <div class="modal-body">
                 <div id="rust-publish">
-                    <h4>Publishing axis-core to Crates.io</h4>
+                    <h4>axis-core Published to Crates.io</h4>
                     <div class="code-block">
-                        <pre><code>cd axis-core-rs
-cargo login
-cargo publish</code></pre>
+                        <pre><code>cargo add axis-core</code></pre>
                     </div>
-                    <p><strong>Status:</strong> Ready to publish - all tests pass, documentation complete.</p>
-                    <a href="axis-core-rs/README.md" class="btn btn-primary">View Rust SDK Docs</a>
+                    <p><strong>Status:</strong> ✅ Published and available - all tests pass, documentation complete.</p>
+                    <a href="https://crates.io/crates/axis-core" class="btn btn-primary" target="_blank">View on Crates.io</a>
                 </div>
             </div>
         </div>
