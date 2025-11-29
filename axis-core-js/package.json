@@ -1,21 +1,31 @@
 {
-  "name": "axis-core",
+  "name": "axis-core-sdk",
   "version": "1.0.0",
   "description": "AXIS-CORE SDK for programmatic web accessibility checking (JavaScript/Node.js)",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
   },
-  "keywords": ["accessibility", "wcag", "web", "audit", "sdk"],
+  "keywords": [
+    "accessibility",
+    "wcag",
+    "web",
+    "audit",
+    "sdk"
+  ],
   "author": "ABHIRAM-CREATOR06",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ABHIRAM-CREATOR06/Acess1"
+    "url": "git+https://github.com/ABHIRAM-CREATOR06/Acess1.git"
   },
   "dependencies": {
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
     "puppeteer": "^21.0.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ABHIRAM-CREATOR06/Acess1/issues"
+  },
+  "homepage": "https://github.com/ABHIRAM-CREATOR06/Acess1#readme"
 }

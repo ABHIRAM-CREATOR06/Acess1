@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>AXIS-CORE</id>
+    <version>1.0.0</version>
+    <authors>ABHIRAM-CREATOR06</authors>
+    <license type="expression">GPL-3.0-or-later</license>
+    <licenseUrl>https://licenses.nuget.org/GPL-3.0-or-later</licenseUrl>
+    <description>AXIS-CORE SDK for programmatic web accessibility checking</description>
+    <tags>accessibility wcag web audit sdk</tags>
+    <repository type="git" url="https://github.com/ABHIRAM-CREATOR06/Acess1" commit="3c0d7526630259d825643c8cd2129df7cc74f533" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="HtmlAgilityPack" version="1.11.61" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging" version="8.0.0" exclude="Build,Analyzers" />
+        <dependency id="PuppeteerSharp" version="18.0.2" exclude="Build,Analyzers" />
+        <dependency id="QuestPDF" version="2024.7.2" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\AXIS-CORE\bin\Release\net8.0\AXIS-CORE.dll" target="lib\net8.0\AXIS-CORE.dll" />
+  </files>
+</package>

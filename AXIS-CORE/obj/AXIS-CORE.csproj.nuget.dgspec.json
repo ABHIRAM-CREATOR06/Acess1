@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
   },
   "projects": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectUniqueName": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "projectName": "AXIS-CORE",
-        "projectPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "packagesPath": "C:\\Users\\abhir\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
+        "outputPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abhir\\AppData\\Roaming\\NuGet\\NuGet.Config"
