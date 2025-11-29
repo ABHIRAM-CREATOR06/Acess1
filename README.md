@@ -207,7 +207,7 @@ dotnet run
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GPL-3.0-or-later License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -222,8 +222,42 @@ For issues, questions, or feature requests:
 - Create an issue on GitHub
 - Check the troubleshooting section
 - Review the technical documentation
+## 🔧 AXIS-CORE SDK
+
+AXIS-CORE is our cross-platform SDK that allows developers to integrate accessibility checking into their applications programmatically. Available for .NET, JavaScript/Node.js, Python, and Rust.
+
+### Key Features
+- **Programmatic API**: Check URLs and HTML content for accessibility issues
+- **WCAG Compliance**: Automated checks against WCAG 2.1 standards
+- **Scoring System**: Get accessibility scores and compliance status
+- **Export Options**: Generate TXT and PDF reports
+- **Cross-platform**: Consistent API across multiple programming languages
+
+### Quick Start
+```csharp
+// .NET
+var checker = new AxisCore();
+var report = await checker.CheckUrlAsync("https://example.com");
+Console.WriteLine($"Score: {report.AccessibilityScore}/100");
+```
+
+```javascript
+// JavaScript
+const { AxisCore } = require('axis-core');
+const checker = new AxisCore();
+const report = await checker.checkUrl('https://example.com');
+console.log(`Score: ${report.accessibilityScore}/100`);
+```
+
+### SDK Documentation
+- [AXIS-CORE README](AXIS-CORE/README.md) - Complete SDK documentation
+- [NuGet Package](https://www.nuget.org/packages/AXIS-CORE/) - .NET package
+- [npm Package](https://www.npmjs.com/package/axis-core) - JavaScript package
+- [PyPI Package](https://pypi.org/project/axis-core/) - Python package
+- [Crates.io](https://crates.io/crates/axis-core) - Rust crate
 
 ---
+
 <br>Please do checkout our [A11Y: LAZY EDITION](https://github.com/ABHIRAM-CREATOR06/a11y-check) where developer could check accessibity right in process of development in vscode.<br>
 <br> <br>
 **Made with ❤️ for a more accessible web**

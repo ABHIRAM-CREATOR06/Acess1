@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>AXIS_CORE</RootNamespace>
+    <Nullable>enable</Nullable>
+    <PackageId>AXIS-CORE</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>ABHIRAM-CREATOR06</Authors>
+    <Description>AXIS-CORE SDK for programmatic web accessibility checking</Description>
+    <PackageTags>accessibility;wcag;web;audit;sdk</PackageTags>
+    <RepositoryUrl>https://github.com/ABHIRAM-CREATOR06/Acess1</RepositoryUrl>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+    <PackageReference Include="PuppeteerSharp" Version="18.0.2" />
+    <PackageReference Include="QuestPDF" Version="2024.7.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/logo.png" />
+  </ItemGroup>
+
+</Project>
