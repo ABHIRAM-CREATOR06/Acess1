@@ -166,8 +166,8 @@ axis-core = "1.0"
 | Runtime | Registry | Status |
 |---|---|---|
 | .NET | [NuGet — AXIS-CORE](https://www.nuget.org/packages/AXIS-CORE/) | Published |
-| JavaScript | [npm — axis-core-sdk](https://www.npmjs.com/package/axis-core-sdk) | Ready |
-| Rust | [crates.io — axis-core](https://crates.io/crates/axis-core) | Ready |
+| JavaScript | [npm — axis-core-sdk](https://www.npmjs.com/package/axis-core-sdk) | Published  |
+| Rust | [crates.io — axis-core](https://crates.io/crates/axis-core) | Published  |
 | Python | [PyPI — axis-core](https://pypi.org/project/axis-core/) | Planned |
 
 ---
