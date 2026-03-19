@@ -195,12 +195,12 @@ axis-core = "1.0"
 
 ### Packages
 
-| Runtime | Registry | Status |
-|---|---|---|
-| .NET | [NuGet — AXIS-CORE](https://www.nuget.org/packages/AXIS-CORE/) | Published |
-| JavaScript | [npm — axis-core-sdk](https://www.npmjs.com/package/axis-core-sdk) | Published |
-| Rust | [crates.io — axis-core](https://crates.io/crates/axis-core) | Published |
-| Python | [PyPI — axis-core](https://pypi.org/project/axis-core/) | Planned |
+| Runtime | Package | Version | Status |
+|---|---|---|---|
+| .NET | [AXIS-CORE](https://www.nuget.org/packages/AXIS-CORE/) | 1.2.0 | ✅ Published |
+| JavaScript | [axis-core-sdk](https://www.npmjs.com/package/axis-core-sdk) | 1.0.0 | ✅ Published |
+| Rust | [axis-core](https://crates.io/crates/axis-core) | 1.0.0 | ✅ Published |
+| Python | [axis-core](https://pypi.org/project/axis-core/) | — | 🔜 Planned |
 
 ---
 
