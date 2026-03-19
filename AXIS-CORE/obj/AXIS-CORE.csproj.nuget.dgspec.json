@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
+    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
   },
   "projects": {
-    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
-      "version": "1.0.0",
+    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
+      "version": "1.2.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "projectName": "AXIS-CORE",
-        "projectPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "packagesPath": "C:\\Users\\abhir\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
+        "outputPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abhir\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -46,7 +46,7 @@
           "dependencies": {
             "HtmlAgilityPack": {
               "target": "Package",
-              "version": "[1.11.61, )"
+              "version": "[1.12.1, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -62,7 +62,7 @@
             },
             "QuestPDF": {
               "target": "Package",
-              "version": "[2024.7.2, )"
+              "version": "[2024.10.3, )"
             }
           },
           "imports": [
@@ -79,15 +79,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
+              "version": "[8.0.25, 8.0.25]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
+              "version": "[8.0.25, 8.0.25]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.22, 8.0.22]"
+              "version": "[8.0.25, 8.0.25]"
             }
           ],
           "frameworkReferences": {
@@ -95,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -6,23 +6,23 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "AXIS-CORE/1.0.0": {
+      "AXIS-CORE/1.2.0": {
         "dependencies": {
-          "HtmlAgilityPack": "1.11.61",
+          "HtmlAgilityPack": "1.12.1",
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
           "Microsoft.Extensions.Logging": "8.0.0",
           "PuppeteerSharp": "18.0.2",
-          "QuestPDF": "2024.7.2"
+          "QuestPDF": "2024.10.3"
         },
         "runtime": {
           "AXIS-CORE.dll": {}
         }
       },
-      "HtmlAgilityPack/1.11.61": {
+      "HtmlAgilityPack/1.12.1": {
         "runtime": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
-            "assemblyVersion": "1.11.61.0",
-            "fileVersion": "1.11.61.0"
+          "lib/net8.0/HtmlAgilityPack.dll": {
+            "assemblyVersion": "1.12.1.0",
+            "fileVersion": "1.12.1.0"
           }
         }
       },
@@ -118,11 +118,11 @@
           }
         }
       },
-      "QuestPDF/2024.7.2": {
+      "QuestPDF/2024.10.3": {
         "runtime": {
           "lib/net8.0/QuestPDF.dll": {
-            "assemblyVersion": "2024.7.2.0",
-            "fileVersion": "2024.7.2.0"
+            "assemblyVersion": "2024.10.3.0",
+            "fileVersion": "2024.10.3.0"
           }
         },
         "runtimeTargets": {
@@ -166,17 +166,17 @@
     }
   },
   "libraries": {
-    "AXIS-CORE/1.0.0": {
+    "AXIS-CORE/1.2.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "HtmlAgilityPack/1.11.61": {
+    "HtmlAgilityPack/1.12.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-hqZASeEFHS9quHvfZSwaULoAJLWkOYVPiQjc3P9J4pQS8vSYzrP3bxe04Vm7vYYuxwbQhq9hCSVvZVLTyRaNaQ==",
-      "path": "htmlagilitypack/1.11.61",
-      "hashPath": "htmlagilitypack.1.11.61.nupkg.sha512"
+      "sha512": "sha512-SP6/2Y26CXtxjXn0Wwsom9Ek35SNWKHEu/IWhNEFejBSSVWWXPRSlpqpBSYWv1SQhYFnwMO01xVbEdK3iRR4hg==",
+      "path": "htmlagilitypack/1.12.1",
+      "hashPath": "htmlagilitypack.1.12.1.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/1.1.0": {
       "type": "package",
@@ -241,12 +241,12 @@
       "path": "puppeteersharp/18.0.2",
       "hashPath": "puppeteersharp.18.0.2.nupkg.sha512"
     },
-    "QuestPDF/2024.7.2": {
+    "QuestPDF/2024.10.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-EUNpp+es1Ck6O8uow04wWuuVFDtwVZQ74oi5zx8VOMxwUKL9ExFtCG0afdx81gCSkwX1OFmr1LSNzEKiw5I8uQ==",
-      "path": "questpdf/2024.7.2",
-      "hashPath": "questpdf.2024.7.2.nupkg.sha512"
+      "sha512": "sha512-pYqotWAm9XncO0c63zGXf2yPKnghP7uTiO6OJFX7jEHZrlApBFzViXSvWPAC5Yjark4MVztiq+4l5nZjYWIIUg==",
+      "path": "questpdf/2024.10.3",
+      "hashPath": "questpdf.2024.10.3.nupkg.sha512"
     }
   }
 }

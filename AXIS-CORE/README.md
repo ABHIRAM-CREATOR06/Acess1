@@ -1,12 +1,17 @@
 # AXIS-CORE SDK
 
+[![NuGet](https://img.shields.io/nuget/v/AXIS-CORE.svg)](https://www.nuget.org/packages/AXIS-CORE/)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com)
+[![WCAG](https://img.shields.io/badge/WCAG-2.2-F59E0B?style=flat-square)](https://www.w3.org/WAI/WCAG22/quickref/)
+[![License](https://img.shields.io/badge/License-GPL--3.0-22C55E?style=flat-square)](../LICENSE)
+
 AXIS-CORE is a cross-platform SDK for programmatic web accessibility checking. It provides developers with tools to integrate accessibility audits into their applications, CI/CD pipelines, and automated testing workflows.
 
 ## Features
 
 - **URL Analysis**: Check any website for accessibility issues
 - **HTML Content Analysis**: Analyze local HTML strings
-- **WCAG Compliance**: Automated checks against WCAG 2.1 standards
+- **WCAG Compliance**: Automated checks against WCAG 2.2 standards
 - **Real-time Scoring**: Get instant accessibility scores (0-100)
 - **Compliance Status**: Determine if content is Fully/Mostly/Partially/Not Compliant
 - **Export Options**: Generate TXT and PDF reports

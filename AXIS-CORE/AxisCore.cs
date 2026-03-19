@@ -69,7 +69,7 @@ namespace AXIS_CORE
         /// <summary>
         /// Gets the SDK version
         /// </summary>
-        public static string Version => "1.0.0";
+        public static string Version => "1.2.0";
 
         /// <summary>
         /// Gets the embedded logo as byte array

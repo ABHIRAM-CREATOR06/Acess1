@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>11.0</LangVersion>
     <PackageId>AXIS-CORE</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.2.0</Version>
     <Authors>ABHIRAM-CREATOR06</Authors>
     <Description>AXIS-CORE SDK for programmatic web accessibility checking</Description>
     <PackageTags>accessibility;wcag;web;audit;sdk</PackageTags>
@@ -15,9 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
     <PackageReference Include="PuppeteerSharp" Version="18.0.2" />
-    <PackageReference Include="QuestPDF" Version="2024.7.2" />
+    <PackageReference Include="QuestPDF" Version="2024.10.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
   </ItemGroup>

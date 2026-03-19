@@ -2,15 +2,15 @@
   "version": 3,
   "targets": {
     "net8.0": {
-      "HtmlAgilityPack/1.11.61": {
+      "HtmlAgilityPack/1.12.1": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+          "lib/net8.0/HtmlAgilityPack.dll": {
             "related": ".deps.json;.pdb;.xml"
           }
         },
         "runtime": {
-          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+          "lib/net8.0/HtmlAgilityPack.dll": {
             "related": ".deps.json;.pdb;.xml"
           }
         }
@@ -168,7 +168,7 @@
           }
         }
       },
-      "QuestPDF/2024.7.2": {
+      "QuestPDF/2024.10.3": {
         "type": "package",
         "compile": {
           "lib/net8.0/QuestPDF.dll": {
@@ -217,14 +217,14 @@
     }
   },
   "libraries": {
-    "HtmlAgilityPack/1.11.61": {
-      "sha512": "hqZASeEFHS9quHvfZSwaULoAJLWkOYVPiQjc3P9J4pQS8vSYzrP3bxe04Vm7vYYuxwbQhq9hCSVvZVLTyRaNaQ==",
+    "HtmlAgilityPack/1.12.1": {
+      "sha512": "SP6/2Y26CXtxjXn0Wwsom9Ek35SNWKHEu/IWhNEFejBSSVWWXPRSlpqpBSYWv1SQhYFnwMO01xVbEdK3iRR4hg==",
       "type": "package",
-      "path": "htmlagilitypack/1.11.61",
+      "path": "htmlagilitypack/1.12.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "htmlagilitypack.1.11.61.nupkg.sha512",
+        "htmlagilitypack.1.12.1.nupkg.sha512",
         "htmlagilitypack.nuspec",
         "lib/Net35/HtmlAgilityPack.dll",
         "lib/Net35/HtmlAgilityPack.pdb",
@@ -241,14 +241,10 @@
         "lib/NetCore45/HtmlAgilityPack.XML",
         "lib/NetCore45/HtmlAgilityPack.dll",
         "lib/NetCore45/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.3/HtmlAgilityPack.dll",
-        "lib/netstandard1.3/HtmlAgilityPack.pdb",
-        "lib/netstandard1.3/HtmlAgilityPack.xml",
-        "lib/netstandard1.6/HtmlAgilityPack.deps.json",
-        "lib/netstandard1.6/HtmlAgilityPack.dll",
-        "lib/netstandard1.6/HtmlAgilityPack.pdb",
-        "lib/netstandard1.6/HtmlAgilityPack.xml",
+        "lib/net8.0/HtmlAgilityPack.deps.json",
+        "lib/net8.0/HtmlAgilityPack.dll",
+        "lib/net8.0/HtmlAgilityPack.pdb",
+        "lib/net8.0/HtmlAgilityPack.xml",
         "lib/netstandard2.0/HtmlAgilityPack.deps.json",
         "lib/netstandard2.0/HtmlAgilityPack.dll",
         "lib/netstandard2.0/HtmlAgilityPack.pdb",
@@ -262,7 +258,8 @@
         "lib/uap10.0/HtmlAgilityPack.XML",
         "lib/uap10.0/HtmlAgilityPack.dll",
         "lib/uap10.0/HtmlAgilityPack.pdb",
-        "lib/uap10.0/HtmlAgilityPack.pri"
+        "lib/uap10.0/HtmlAgilityPack.pri",
+        "readme.md"
       ]
     },
     "Microsoft.Bcl.AsyncInterfaces/1.1.0": {
@@ -575,10 +572,10 @@
         "puppeteersharp.nuspec"
       ]
     },
-    "QuestPDF/2024.7.2": {
-      "sha512": "EUNpp+es1Ck6O8uow04wWuuVFDtwVZQ74oi5zx8VOMxwUKL9ExFtCG0afdx81gCSkwX1OFmr1LSNzEKiw5I8uQ==",
+    "QuestPDF/2024.10.3": {
+      "sha512": "pYqotWAm9XncO0c63zGXf2yPKnghP7uTiO6OJFX7jEHZrlApBFzViXSvWPAC5Yjark4MVztiq+4l5nZjYWIIUg==",
       "type": "package",
-      "path": "questpdf/2024.7.2",
+      "path": "questpdf/2024.10.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -630,7 +627,7 @@
         "lib/net8.0/QuestPDF.xml",
         "lib/netstandard2.0/QuestPDF.dll",
         "lib/netstandard2.0/QuestPDF.xml",
-        "questpdf.2024.7.2.nupkg.sha512",
+        "questpdf.2024.10.3.nupkg.sha512",
         "questpdf.nuspec",
         "runtimes/linux-arm64/native/libQuestPdfSkia.so",
         "runtimes/linux-musl-x64/native/libQuestPdfSkia.so",
@@ -644,18 +641,18 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "HtmlAgilityPack >= 1.11.61",
+      "HtmlAgilityPack >= 1.12.1",
       "Microsoft.Extensions.DependencyInjection >= 8.0.0",
       "Microsoft.Extensions.Logging >= 8.0.0",
       "PuppeteerSharp >= 18.0.2",
-      "QuestPDF >= 2024.7.2"
+      "QuestPDF >= 2024.10.3"
     ]
   },
   "packageFolders": {
     "C:\\Users\\abhir\\.nuget\\packages\\": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "1.2.0",
     "restore": {
       "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
       "projectName": "AXIS-CORE",
@@ -696,7 +693,7 @@
         "dependencies": {
           "HtmlAgilityPack": {
             "target": "Package",
-            "version": "[1.11.61, )"
+            "version": "[1.12.1, )"
           },
           "Microsoft.Extensions.DependencyInjection": {
             "target": "Package",
@@ -712,7 +709,7 @@
           },
           "QuestPDF": {
             "target": "Package",
-            "version": "[2024.7.2, )"
+            "version": "[2024.10.3, )"
           }
         },
         "imports": [
@@ -729,15 +726,15 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
+            "version": "[8.0.25, 8.0.25]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
+            "version": "[8.0.25, 8.0.25]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.22, 8.0.22]"
+            "version": "[8.0.25, 8.0.25]"
           }
         ],
         "frameworkReferences": {
@@ -745,7 +742,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
