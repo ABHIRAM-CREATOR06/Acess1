@@ -225,6 +225,13 @@ Ensure .NET 9.0 Runtime is installed. Try running as administrator. Check Window
 - **India RPwD Act** — Rights of Persons with Disabilities
 
 ---
+## Download Count
+
+![NuGet Downloads](https://img.shields.io/nuget/dt/AXIS-CORE?style=flat&label=NuGet&color=blue)
+![npm Downloads](https://img.shields.io/npm/dt/axis-core-sdk?style=flat&label=npm&color=red)
+![Crates.io Downloads](https://img.shields.io/crates/d/axis-core?style=flat&label=Cargo&color=orange)
+
+---
 
 ## Contributing
 
