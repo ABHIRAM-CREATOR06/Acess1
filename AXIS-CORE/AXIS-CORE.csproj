@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>11.0</LangVersion>
     <PackageId>AXIS-CORE</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>ABHIRAM-CREATOR06</Authors>
     <Description>AXIS-CORE SDK for programmatic web accessibility checking</Description>
     <PackageTags>accessibility;wcag;web;audit;sdk</PackageTags>
