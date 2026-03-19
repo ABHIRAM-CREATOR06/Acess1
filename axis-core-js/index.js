@@ -166,6 +166,48 @@ class AxisCore {
             });
         }
 
+        // Check Target Size (WCAG 2.5.8)
+        const interactiveElements = $('a, button, input, select, textarea');
+        let hasInteractiveElements = false;
+        interactiveElements.each((i, elem) => {
+            const type = $(elem).attr('type') || '';
+            if (type.toLowerCase() === 'hidden') {
+                return; // Skip hidden
+            }
+            hasInteractiveElements = true;
+            return false; // Break
+        });
+
+        if (hasInteractiveElements) {
+            issues.push({
+                type: 'Target Size Verification (WCAG 2.2)',
+                elementSnippet: 'Interactive Elements',
+                suggestedFix: 'Ensure all clickable targets are at least 24x24 CSS pixels',
+                severity: 'Info',
+                category: 'Accessibility'
+            });
+        }
+
+        // Check Redundant Entry (WCAG 3.3.7)
+        $('input[type="text"], input[type="email"], input:not([type])').each((i, elem) => {
+            const name = ($(elem).attr('name') || '').toLowerCase();
+            const id = ($(elem).attr('id') || '').toLowerCase();
+            const autocomplete = $(elem).attr('autocomplete');
+            
+            if (name.includes('name') || name.includes('email') || name.includes('phone') || name.includes('address') ||
+                id.includes('name') || id.includes('email') || id.includes('phone') || id.includes('address')) {
+                if (!autocomplete) {
+                    issues.push({
+                        type: 'Redundant Entry Risk (WCAG 2.2)',
+                        elementSnippet: $.html(elem).substring(0, 100) + '...',
+                        suggestedFix: 'Add autocomplete attribute to fields requesting user data',
+                        severity: 'Warning',
+                        category: 'Accessibility'
+                    });
+                }
+            }
+        });
+
         // Calculate scores
         const accessibilityIssues = issues.filter(i => i.category === 'Accessibility');
         const errorCount = accessibilityIssues.filter(i => i.severity === 'Error').length;

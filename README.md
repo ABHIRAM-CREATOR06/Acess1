@@ -7,7 +7,7 @@ A comprehensive Windows desktop application for checking web accessibility compl
 ### Core Functionality
 - **URL Analysis**: Check any website for accessibility issues
 - **File Upload**: Analyze local HTML files
-- **WCAG Compliance**: Automated checks against WCAG 2.1 standards
+- **WCAG Compliance**: Automated checks against WCAG 2.2 standards
 - **Real-time Scoring**: Get instant accessibility scores (0-100)
 - **Compliance Status**: Determine if your site is Fully/Mostly/Partially/Not Compliant
 
@@ -18,6 +18,8 @@ A comprehensive Windows desktop application for checking web accessibility compl
 - **Color Contrast**: Analyze text/background color ratios
 - **Eye Comfort**: Check font sizes and line heights
 - **JavaScript Content**: Render dynamic content with headless browser
+- **Target Size**: Verify minimum 24x24px clickable areas (WCAG 2.2)
+- **Redundant Entry**: Prevent repetitive data entry with autocomplete checks (WCAG 2.2)
 - **Environmental Impact**: Calculate energy use and CO₂ emissions
 
 ### Export Options
@@ -148,7 +150,8 @@ WebAccessibilityChecker/
 ## 📊 Accessibility Standards
 
 The app checks compliance with:
-- **WCAG 2.1**: Web Content Accessibility Guidelines
+- **WCAG 2.2**: Web Content Accessibility Guidelines (Latest)
+- **WCAG 2.1**: Previous standard support
 - **Section 508**: US federal accessibility standards
 - **India RPwD Act**: Rights of Persons with Disabilities Act
 
@@ -157,6 +160,43 @@ The app checks compliance with:
 2. **Operable**: Keyboard navigation, timing, seizures
 3. **Understandable**: Readable text, predictable behavior
 4. **Robust**: Compatible with assistive technologies
+
+## 🆕 WCAG 2.2 Compliance (New in This Version)
+
+WCAG 2.2 introduced several new success criteria to improve accessibility for users with cognitive, mobility, and low-vision disabilities. This version adds automated checks for the following new rules:
+
+### 2.5.8 — Target Size Minimum (Level AA)
+Interactive elements such as links, buttons, and form controls must have a minimum clickable area of **24×24 CSS pixels**. This ensures that users with motor impairments can reliably activate controls.
+
+**What is checked:**
+- All `<a>`, `<button>`, `<input>`, `<select>`, and `<textarea>` elements are flagged for review
+- Elements with insufficient target space are reported as accessibility issues
+
+**How to fix:**
+```css
+/* Add adequate padding or minimum dimensions */
+button, a {
+  min-width: 24px;
+  min-height: 24px;
+  padding: 8px 12px;
+}
+```
+
+### 3.3.7 — Redundant Entry (Level A)
+If a user has already provided information earlier in a process, they should not have to re-enter the same data. Form fields that request common personal data (name, email, phone, address) must include the `autocomplete` attribute to allow browsers to pre-fill information.
+
+**What is checked:**
+- `<input>` fields with names/IDs referencing `name`, `email`, `phone`, or `address`
+- Fields without an `autocomplete` attribute are flagged as a warning
+
+**How to fix:**
+```html
+<!-- Add the autocomplete attribute matching the type of data -->
+<input type="text"  name="name"    autocomplete="name">
+<input type="email" name="email"   autocomplete="email">
+<input type="tel"   name="phone"   autocomplete="tel">
+<input type="text"  name="address" autocomplete="street-address">
+```
 
 ## 🌱 Environmental Impact Analysis
 
@@ -228,7 +268,7 @@ AXIS-CORE is our cross-platform SDK that allows developers to integrate accessib
 
 ### Key Features
 - **Programmatic API**: Check URLs and HTML content for accessibility issues
-- **WCAG Compliance**: Automated checks against WCAG 2.1 standards
+- **WCAG Compliance**: Automated checks against WCAG 2.2 standards
 - **Scoring System**: Get accessibility scores and compliance status
 - **Export Options**: Generate TXT and PDF reports
 - **Cross-platform**: Consistent API across multiple programming languages

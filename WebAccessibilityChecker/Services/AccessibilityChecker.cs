@@ -36,6 +36,8 @@ namespace WebAccessibilityChecker.Services
             report.Issues.AddRange(CheckDarkModeSupport(doc));
             report.Issues.AddRange(CheckEnvironment(doc, loadResult));
             report.Issues.AddRange(CheckSafety(doc, loadResult, report.WebsiteUrl));
+            report.Issues.AddRange(CheckTargetSize(doc));
+            report.Issues.AddRange(CheckRedundantEntry(doc));
 
             // Add performance issues
             report.Issues.AddRange(CheckPerformance(loadResult));
@@ -948,6 +950,69 @@ namespace WebAccessibilityChecker.Services
             var g = color.g <= 0.03928 ? color.g / 12.92 : Math.Pow((color.g + 0.055) / 1.055, 2.4);
             var b = color.b <= 0.03928 ? color.b / 12.92 : Math.Pow((color.b + 0.055) / 1.055, 2.4);
             return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+
+        private List<Issue> CheckTargetSize(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var targets = doc.DocumentNode.SelectNodes("//a | //button | //input | //select | //textarea");
+            if (targets != null)
+            {
+                bool hasTargets = false;
+                foreach (var target in targets)
+                {
+                    if (target.Name == "input" && target.Attributes["type"]?.Value?.ToLower() == "hidden")
+                        continue;
+                    hasTargets = true;
+                    break;
+                }
+
+                if (hasTargets)
+                {
+                    issues.Add(new Issue
+                    {
+                        Type = "Target Size Verification (WCAG 2.2)",
+                        ElementSnippet = "Interactive Elements (Links, Buttons, Inputs)",
+                        SuggestedFix = "Ensure all clickable targets are at least 24x24 CSS pixels (WCAG 2.5.8 Target Size Minimum)",
+                        SeverityLevel = Severity.Info,
+                        FixExample = "Provide adequate padding or min-width/min-height in CSS",
+                        Category = Category.Accessibility
+                    });
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckRedundantEntry(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var inputs = doc.DocumentNode.SelectNodes("//input[@type='text'] | //input[@type='email'] | //input[not(@type)]");
+            if (inputs != null)
+            {
+                foreach (var input in inputs)
+                {
+                    var name = input.Attributes["name"]?.Value?.ToLower() ?? "";
+                    var id = input.Attributes["id"]?.Value?.ToLower() ?? "";
+                    
+                    if (name.Contains("name") || name.Contains("email") || name.Contains("phone") || name.Contains("address") ||
+                        id.Contains("name") || id.Contains("email") || id.Contains("phone") || id.Contains("address"))
+                    {
+                        if (!input.Attributes.Contains("autocomplete"))
+                        {
+                            issues.Add(new Issue
+                            {
+                                Type = "Redundant Entry Risk (WCAG 2.2)",
+                                ElementSnippet = input.OuterHtml,
+                                SuggestedFix = "Add 'autocomplete' attribute to fields requesting user data (WCAG 3.3.7 Redundant Entry)",
+                                SeverityLevel = Severity.Warning,
+                                FixExample = "<input type=\"text\" name=\"email\" autocomplete=\"email\">",
+                                Category = Category.Accessibility
+                            });
+                        }
+                    }
+                }
+            }
+            return issues;
         }
     }
 }

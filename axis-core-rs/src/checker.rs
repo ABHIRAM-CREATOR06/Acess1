@@ -29,6 +29,8 @@ impl AccessibilityChecker {
         report.issues.extend(self.check_color_contrast(&load_result.document));
         report.issues.extend(self.check_lang_attributes(&load_result.document));
         report.issues.extend(self.check_best_practices(&load_result.document));
+        report.issues.extend(self.check_target_size(&load_result.document));
+        report.issues.extend(self.check_redundant_entry(&load_result.document));
 
         // Performance and environment checks
         report.issues.extend(self.check_performance(&load_result));
@@ -250,6 +252,70 @@ impl AccessibilityChecker {
                 Some("<link rel=\"icon\" href=\"favicon.ico\">"),
                 Category::BestPractices,
             ));
+        }
+
+        issues
+    }
+
+    /// Check for target size (WCAG 2.5.8)
+    fn check_target_size(&self, document: &Html) -> Vec<Issue> {
+        let mut issues = Vec::new();
+        let target_selector = Selector::parse("a, button, input, select, textarea").unwrap();
+        
+        let mut has_targets = false;
+        for target in document.select(&target_selector) {
+            let tag_name = target.value().name();
+            let input_type = target.value().attr("type").unwrap_or("");
+            
+            if tag_name == "input" && input_type.eq_ignore_ascii_case("hidden") {
+                continue;
+            }
+            has_targets = true;
+            break;
+        }
+
+        if has_targets {
+            issues.push(Issue::new(
+                "Target Size Verification (WCAG 2.2)",
+                Some("Interactive Elements"),
+                Some("Ensure all clickable targets are at least 24x24 CSS pixels (WCAG 2.5.8 Target Size Minimum)"),
+                Severity::Info,
+                Some("Provide adequate padding or min-width/height in CSS"),
+                Category::Accessibility,
+            ));
+        }
+
+        issues
+    }
+
+    /// Check for redundant entry risk (WCAG 3.3.7)
+    fn check_redundant_entry(&self, document: &Html) -> Vec<Issue> {
+        let mut issues = Vec::new();
+        let input_selector = Selector::parse("input").unwrap();
+
+        for input in document.select(&input_selector) {
+            let input_type = input.value().attr("type").unwrap_or("text").to_lowercase();
+            
+            if input_type == "text" || input_type == "email" {
+                let name = input.value().attr("name").unwrap_or("").to_lowercase();
+                let id = input.value().attr("id").unwrap_or("").to_lowercase();
+                let has_autocomplete = input.value().attr("autocomplete").is_some();
+
+                if name.contains("name") || name.contains("email") || name.contains("phone") || name.contains("address") ||
+                   id.contains("name") || id.contains("email") || id.contains("phone") || id.contains("address") {
+                    
+                    if !has_autocomplete {
+                        issues.push(Issue::new(
+                            "Redundant Entry Risk (WCAG 2.2)",
+                            Some(&input.html()),
+                            Some("Add 'autocomplete' attribute to fields requesting user data (WCAG 3.3.7 Redundant Entry)"),
+                            Severity::Warning,
+                            Some("<input type=\"text\" name=\"email\" autocomplete=\"email\">"),
+                            Category::Accessibility,
+                        ));
+                    }
+                }
+            }
         }
 
         issues
