@@ -1,15 +1,13 @@
 <div align="center">
 
-<br/>
-
-```
+<pre>
  █████╗ ██╗  ██╗██╗███████╗
 ██╔══██╗╚██╗██╔╝██║██╔════╝
 ███████║ ╚███╔╝ ██║███████╗
 ██╔══██║ ██╔██╗ ██║╚════██║
 ██║  ██║██╔╝ ██╗██║███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝
-```
+</pre>
 
 ### Web Accessibility Checker
 
@@ -19,6 +17,17 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D4?style=flat-square&logo=windows)](https://microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-GPL--3.0-22C55E?style=flat-square)](LICENSE)
 [![WCAG](https://img.shields.io/badge/WCAG-2.2-F59E0B?style=flat-square)](https://www.w3.org/WAI/WCAG22/quickref/)
+
+<br/>
+
+![NuGet Version](https://img.shields.io/nuget/v/AXIS-CORE?style=for-the-badge&label=NuGet&color=512BD4)
+![NuGet Downloads](https://img.shields.io/nuget/dt/AXIS-CORE?style=for-the-badge&label=downloads&color=3a1f6e)
+&nbsp;
+![npm Version](https://img.shields.io/npm/v/axis-core-sdk?style=for-the-badge&label=npm&color=CB3837)
+![npm Downloads](https://img.shields.io/npm/dt/axis-core-sdk?style=for-the-badge&label=downloads&color=8b2020)
+&nbsp;
+![Crates.io Version](https://img.shields.io/crates/v/axis-core?style=for-the-badge&label=Cargo&color=E43717)
+![Crates.io Downloads](https://img.shields.io/crates/d/axis-core?style=for-the-badge&label=downloads&color=8b2b10)
 
 <br/>
 
@@ -223,6 +232,13 @@ Ensure .NET 9.0 Runtime is installed. Try running as administrator. Check Window
 - **WCAG 2.1** — Perceivable, Operable, Understandable, Robust
 - **Section 508** — US federal accessibility requirements
 - **India RPwD Act** — Rights of Persons with Disabilities
+
+---
+## Download Count
+
+![NuGet Downloads](https://img.shields.io/nuget/dt/AXIS-CORE?style=flat&label=NuGet&color=blue)
+![npm Downloads](https://img.shields.io/npm/dt/axis-core-sdk?style=flat&label=npm&color=red)
+![Crates.io Downloads](https://img.shields.io/crates/d/axis-core?style=flat&label=Cargo&color=orange)
 
 ---
 
