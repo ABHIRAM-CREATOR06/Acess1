@@ -1,0 +1,46 @@
+   Compiling phf_shared v0.11.3
+   Compiling rand_core v0.6.4
+    Checking parking_lot_core v0.9.12
+   Compiling phf_shared v0.10.0
+    Checking bytes v1.11.0
+    Checking once_cell v1.21.3
+   Compiling ppv-lite86 v0.2.21
+    Checking serde_core v1.0.228
+    Checking siphasher v1.0.1
+   Compiling displaydoc v0.2.5
+   Compiling zerofrom-derive v0.1.6
+   Compiling yoke-derive v0.8.1
+    Checking windows-sys v0.60.2
+    Checking parking_lot v0.12.5
+    Checking litemap v0.8.1
+    Checking writeable v0.6.2
+   Compiling rand_chacha v0.3.1
+    Checking mio v1.1.0
+    Checking new_debug_unreachable v1.0.6
+    Checking futures-core v0.3.31
+    Checking windows_x86_64_msvc v0.52.6
+    Checking fnv v1.0.7
+    Checking siphasher v0.3.11
+    Checking memchr v2.7.6
+    Checking windows-targets v0.52.6
+   Compiling rand v0.8.5
+    Checking http v0.2.12
+    Checking icu_normalizer_data v2.1.1
+    Checking icu_properties_data v2.1.1
+    Checking tracing-core v0.1.35
+    Checking futures-sink v0.3.31
+    Checking equivalent v1.0.2
+    Checking futures-io v0.3.31
+    Checking futures-task v0.3.31
+    Checking mac v0.1.1
+    Checking precomputed-hash v0.1.1
+    Checking hashbrown v0.16.1
+    Checking log v0.4.28
+error: failed to remove C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\axis-core-rs\target\debug\deps\yoke_derive-f5a80d61d169519d.yoke_derive.33ded1ea59b5c98e-cgu.10.rcgu.o: The process cannot access the file because it is being used by another process. (os error 32)
+
+    Checking pin-utils v0.1.0
+error: could not compile `yoke-derive` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: failed to remove C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\axis-core-rs\target\debug\deps\zerofrom_derive-8a612206921e7d82.zerofrom_derive.31d52be2576bc0ce-cgu.05.rcgu.o: The process cannot access the file because it is being used by another process. (os error 32)
+
+error: could not compile `zerofrom-derive` (lib) due to 1 previous error

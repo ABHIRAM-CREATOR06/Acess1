@@ -8,7 +8,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-axis-core = "1.0"
+axis-core = "1.1.1"
 ```
 
 ## Quick Start
@@ -30,12 +30,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Features
 
-- **WCAG 2.1 Compliance**: Automated checks against accessibility guidelines
+- **WCAG 2.2 Compliance**: Automated checks against accessibility guidelines
 - **URL & HTML Analysis**: Test live websites or raw HTML content
 - **Performance Focused**: Zero-cost abstractions and async support
 - **Memory Safe**: Rust's ownership system prevents common bugs
 - **Comprehensive Reporting**: Detailed issue breakdowns and scoring
 - **Environmental Impact**: CO₂ emissions and energy consumption tracking
+- **SEO Analysis**: Built-in search engine optimization checks
+- **Multiple Export Formats**: Export reports as JSON, CSV, or text
+- **Blocking & Async**: Support for both async and blocking HTTP requests
 
 ## API Reference
 
@@ -133,6 +136,93 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::write("accessibility-report.txt", text_report)?;
 
     Ok(())
+}
+```
+
+### Export as JSON
+
+```rust
+use axis_core::AxisCore;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let checker = AxisCore::new();
+    let report = checker.check_url("https://example.com").await?;
+
+    let json = serde_json::to_string_pretty(&report)?;
+    std::fs::write("report.json", json)?;
+
+    Ok(())
+}
+```
+
+### Filter Issues by Severity
+
+```rust
+use axis_core::AxisCore;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let checker = AxisCore::new();
+    let report = checker.check_url("https://example.com").await?;
+
+    // Filter only errors
+    let errors: Vec<_> = report.issues.iter()
+        .filter(|i| i.severity == axis_core::Severity::Error)
+        .collect();
+
+    println!("Found {} errors", errors.len());
+
+    Ok(())
+}
+```
+
+### Blocking API Usage
+
+```rust
+use axis_core::AxisCore;
+
+fn main() {
+    let checker = AxisCore::new();
+    // Use check_url_blocking for synchronous operations
+    let result = checker.check_url_blocking("https://example.com");
+    
+    match result {
+        Ok(report) => println!("Score: {}", report.accessibility_score),
+        Err(e) => eprintln!("Error: {}", e),
+    }
+}
+```
+
+### Check Specific Categories
+
+```rust
+use axis_core::AxisCore;
+use axis_core::models::Category;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let checker = AxisCore::new();
+    let report = checker.check_url("https://example.com").await?;
+
+    // Filter issues by category
+    let seo_issues: Vec<_> = report.issues.iter()
+        .filter(|i| i.category == Category::SEO)
+        .collect();
+
+    println!("Found {} SEO issues", seo_issues.len());
+
+    Ok(())
+}
+```
+
+### Get SDK Version
+
+```rust
+use axis_core::AxisCore;
+
+fn main() {
+    println!("AXIS-CORE SDK Version: {}", AxisCore::version());
 }
 ```
 

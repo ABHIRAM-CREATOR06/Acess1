@@ -199,7 +199,7 @@ axis-core = "1.0"
 |---|---|---|---|
 | .NET | [AXIS-CORE](https://www.nuget.org/packages/AXIS-CORE/) | 1.2.0 | ✅ Published |
 | JavaScript | [axis-core-sdk](https://www.npmjs.com/package/axis-core-sdk) | 1.0.0 | ✅ Published |
-| Rust | [axis-core](https://crates.io/crates/axis-core) | 1.0.0 | ✅ Published |
+| Rust | [axis-core](https://crates.io/crates/axis-core) | 1.1.1 | ✅ Published |
 | Python | [axis-core](https://pypi.org/project/axis-core/) | — | 🔜 Planned |
 
 ---
