@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\obj\Release\net9.0-windows\win-x64\
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\WebAccessibilityChecker\obj\Release\net9.0-windows\win-x64\
 WebAccessibilityChecker
 none
 false
 TRACE;RELEASE;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-c:\Users\abhir\OneDrive\Documents\GitHub\Project1\WebAccessibilityChecker\App.xaml
+C:\Users\abhir\OneDrive\Documents\GitHub\Acess1\WebAccessibilityChecker\App.xaml
 11407045341
 
-111747338330
-211-1582495612
+12-1400368407
+211-1829555906
 MainWindow.xaml;
 
 False
