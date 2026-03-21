@@ -199,7 +199,7 @@ console.log(`Score: ${report.accessibilityScore}/100`);
 ```toml
 # Cargo.toml
 [dependencies]
-axis-core = "1.0"
+axis-core = "1.1.1"
 ```
 
 ### Packages
