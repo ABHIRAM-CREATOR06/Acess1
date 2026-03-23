@@ -8,6 +8,30 @@ namespace AXIS_CORE.Services
 {
     public class AccessibilityChecker
     {
+        /// <summary>
+        /// Deduplicates issues by grouping identical issue types together.
+        /// Groups by: Type only (ignores element differences).
+        /// </summary>
+        private List<Issue> DeduplicateIssues(List<Issue> issues)
+        {
+            var grouped = issues
+                .GroupBy(i => new { i.Type, i.Category })
+                .Select(g =>
+                {
+                    var firstIssue = g.First();
+                    firstIssue.Count = g.Count();
+                    // If there are multiple occurrences, update the element snippet to show count
+                    if (g.Count() > 1)
+                    {
+                        firstIssue.ElementSnippet = $"(and {g.Count() - 1} more occurrences)";
+                    }
+                    return firstIssue;
+                })
+                .ToList();
+
+            return grouped;
+        }
+
         public Report CheckAccessibility(PageLoadResult loadResult)
         {
             var report = new Report();
@@ -37,19 +61,20 @@ namespace AXIS_CORE.Services
             report.Issues.AddRange(CheckMobileResponsiveness(doc));
             report.Issues.AddRange(CheckDarkModeSupport(doc));
 
+            // Deduplicate issues before calculating score
+            report.Issues = DeduplicateIssues(report.Issues);
+
             // Calculate accessibility score only
             var accessibilityIssues = report.Issues.Where(i => i.Category == Category.Accessibility).ToList();
-            int totalIssues = accessibilityIssues.Count;
-            int criticalIssues = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Error);
-            int warningIssues = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Warning);
+            int errorCount = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Error);
+            int warningCount = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Warning);
+            int infoCount = accessibilityIssues.Count(i => i.SeverityLevel == Severity.Info);
 
-            // More nuanced scoring: base score of 100, deduct based on severity and impact
-            double baseScore = 100.0;
-            double criticalPenalty = criticalIssues * 3.0; // Critical issues have bigger impact
-            double warningPenalty = warningIssues * 1.0;  // Warnings have smaller impact
-            double volumePenalty = Math.Max(0, totalIssues - 10) * 0.5; // Volume penalty for many issues
+            // Scoring formula: info issues do not affect the score
+            // baseScore - (errors * 15) - (warnings * 5) - (info * 0)
+            int score = 100 - (errorCount * 15) - (warningCount * 5);
 
-            report.AccessibilityScore = (int)Math.Max(0, Math.Min(100, baseScore - criticalPenalty - warningPenalty - volumePenalty));
+            report.AccessibilityScore = (int)Math.Max(0, Math.Min(100, score));
 
             // Overall compliance based on accessibility
             if (report.AccessibilityScore >= 95) report.ComplianceStatus = "Fully Compliant";

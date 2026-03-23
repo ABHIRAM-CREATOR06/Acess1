@@ -36,6 +36,9 @@ impl AccessibilityChecker {
         report.issues.extend(self.check_performance(&load_result));
         report.issues.extend(self.check_environment(&load_result.document, &load_result));
 
+        // Deduplicate issues before calculating scores
+        report.deduplicate_issues();
+        
         // Calculate final scores
         report.recalculate();
 

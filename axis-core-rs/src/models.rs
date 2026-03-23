@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Severity levels for accessibility issues
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Severity {
     Error,
     Warning,
@@ -9,7 +9,7 @@ pub enum Severity {
 }
 
 /// Categories of accessibility issues
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Category {
     Accessibility,
     SEO,
@@ -34,6 +34,8 @@ pub struct Issue {
     pub fix_example: Option<String>,
     /// Category this issue belongs to
     pub category: Category,
+    /// Count of how many times this issue type occurs (for deduplication)
+    pub count: usize,
 }
 
 impl Issue {
@@ -52,7 +54,39 @@ impl Issue {
             severity,
             fix_example: fix_example.map(|s| s.to_string()),
             category,
+            count: 1,
         }
+    }
+}
+
+impl Report {
+    /// Deduplicate issues by grouping identical issue types (by Type and Category only)
+    pub fn deduplicate_issues(&mut self) {
+        use std::collections::HashMap;
+        let mut grouped: HashMap<(String, Category), Issue> = HashMap::new();
+        
+        for issue in &self.issues {
+            let key = (issue.issue_type.clone(), issue.category.clone());
+            if let Some(existing) = grouped.get_mut(&key) {
+                existing.count += 1;
+            } else {
+                let mut new_issue = issue.clone();
+                new_issue.count = 1;
+                if self.issues.iter().filter(|i| i.issue_type == issue.issue_type && i.category == issue.category).count() > 1 {
+                    new_issue.element_snippet = Some(format!("(and {} more occurrences)", new_issue.count));
+                }
+                grouped.insert(key, new_issue);
+            }
+        }
+        
+        // Update element snippet for all grouped items
+        for issue in grouped.values_mut() {
+            if issue.count > 1 {
+                issue.element_snippet = Some(format!("(and {} more occurrences)", issue.count - 1));
+            }
+        }
+        
+        self.issues = grouped.into_values().collect();
     }
 }
 
@@ -180,21 +214,18 @@ impl Report {
             .filter(|i| matches!(i.category, Category::Accessibility))
             .collect();
 
-        let total_acc_issues = accessibility_issues.len() as f64;
-        let critical_issues = accessibility_issues.iter()
+        let error_count = accessibility_issues.iter()
             .filter(|i| matches!(i.severity, Severity::Error))
-            .count() as f64;
-        let warning_issues = accessibility_issues.iter()
+            .count() as i32;
+        let warning_count = accessibility_issues.iter()
             .filter(|i| matches!(i.severity, Severity::Warning))
-            .count() as f64;
+            .count() as i32;
+        // info issues don't affect the score
 
-        let base_score = 100.0;
-        let critical_penalty = critical_issues * 3.0;
-        let warning_penalty = warning_issues * 1.0;
-        let volume_penalty = if total_acc_issues > 10.0 { (total_acc_issues - 10.0) * 0.5 } else { 0.0 };
+        // Scoring: 100 - (errors * 15) - (warnings * 5) - (info * 0)
+        let score = 100 - (error_count * 15) - (warning_count * 5);
 
-        self.accessibility_score = ((base_score - critical_penalty - warning_penalty - volume_penalty)
-            .max(0.0).min(100.0)) as u32;
+        self.accessibility_score = score.max(0).min(100) as u32;
 
         // Set compliance status based on accessibility score
         self.compliance_status = if self.accessibility_score >= 95 {

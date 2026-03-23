@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   🚀 Web Accessibility Checker
+echo   🚀 Web Accessibility Checker v2.0
 echo ========================================
 echo.
 
@@ -21,7 +21,14 @@ echo Note: The app window may appear behind other windows.
 echo Look for "🚀 Web Accessibility Checker" in your taskbar.
 echo.
 
-dotnet run
+REM Check if Release build exists and use it
+if exist "bin\Release\net9.0-windows\WebAccessibilityChecker.exe" (
+    echo Starting Release build...
+    bin\Release\net9.0-windows\WebAccessibilityChecker.exe
+) else (
+    echo Starting Debug build...
+    dotnet run
+)
 
 if %errorlevel% neq 0 (
     echo.

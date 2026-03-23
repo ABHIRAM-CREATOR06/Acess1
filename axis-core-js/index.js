@@ -208,15 +208,32 @@ class AxisCore {
             }
         });
 
+        // Deduplicate issues: group by type and category only (ignores element differences)
+        const deduplicateIssues = (issues) => {
+            const grouped = {};
+            issues.forEach(issue => {
+                const key = `${issue.type}|${issue.category}`;
+                if (!grouped[key]) {
+                    grouped[key] = { ...issue, count: 1 };
+                } else {
+                    grouped[key].count++;
+                }
+            });
+            return Object.values(grouped);
+        };
+
+        const deduplicatedIssues = deduplicateIssues(issues);
+
         // Calculate scores
-        const accessibilityIssues = issues.filter(i => i.category === 'Accessibility');
+        const accessibilityIssues = deduplicatedIssues.filter(i => i.category === 'Accessibility');
         const errorCount = accessibilityIssues.filter(i => i.severity === 'Error').length;
         const warningCount = accessibilityIssues.filter(i => i.severity === 'Warning').length;
 
-        // Simple scoring algorithm
+        // Simple scoring algorithm: info issues don't affect score
         let accessibilityScore = 100;
-        accessibilityScore -= errorCount * 10;
-        accessibilityScore -= warningCount * 3;
+        accessibilityScore -= errorCount * 15;
+        accessibilityScore -= warningCount * 5;
+        // infoCount * 0 = no penalty
         accessibilityScore = Math.max(0, Math.min(100, accessibilityScore));
 
         // Determine compliance status
@@ -226,7 +243,7 @@ class AxisCore {
         else if (accessibilityScore >= 60) complianceStatus = 'Partially Compliant';
 
         return {
-            issues: issues,
+            issues: deduplicatedIssues,
             totalIssues: issues.length,
             errorCount: errorCount,
             warningCount: warningCount,
