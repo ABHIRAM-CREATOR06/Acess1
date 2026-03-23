@@ -208,15 +208,24 @@ class AxisCore {
             }
         });
 
-        // Deduplicate issues: group by type and category only (ignores element differences)
+        // Deduplicate issues: group by type and category, preserving all unique element instances
         const deduplicateIssues = (issues) => {
             const grouped = {};
             issues.forEach(issue => {
                 const key = `${issue.type}|${issue.category}`;
                 if (!grouped[key]) {
-                    grouped[key] = { ...issue, count: 1 };
+                    grouped[key] = { 
+                        ...issue, 
+                        count: 1,
+                        elementInstances: [issue.elementSnippet] // Store all unique elements
+                    };
                 } else {
                     grouped[key].count++;
+                    // Add unique element to instances list
+                    const element = issue.elementSnippet;
+                    if (!grouped[key].elementInstances.includes(element)) {
+                        grouped[key].elementInstances.push(element);
+                    }
                 }
             });
             return Object.values(grouped);
@@ -286,8 +295,19 @@ class AxisCore {
             report.issues.forEach((issue, index) => {
                 text += `${index + 1}. ${issue.type} (${issue.severity})\n`;
                 text += `   Category: ${issue.category}\n`;
-                text += `   Element: ${issue.elementSnippet}\n`;
-                text += `   Fix: ${issue.suggestedFix}\n\n`;
+                text += `   Total Occurrences: ${issue.count}\n`;
+                
+                // Show all unique instances instead of hiding them
+                const instances = issue.elementInstances && issue.elementInstances.length > 0 
+                    ? issue.elementInstances 
+                    : [issue.elementSnippet];
+                
+                instances.forEach((element, i) => {
+                    text += `\n   Instance ${i + 1}:\n`;
+                    text += `   Element: ${element}\n`;
+                    text += `   Fix: ${issue.suggestedFix}\n`;
+                });
+                text += '\n';
             });
         } else {
             text += 'No accessibility issues found!\n';

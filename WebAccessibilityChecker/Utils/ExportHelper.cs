@@ -52,10 +52,19 @@ namespace WebAccessibilityChecker.Utils
                 sb.AppendLine($"Category: {issue.Category}");
                 sb.AppendLine($"Type: {issue.Type}");
                 sb.AppendLine($"Severity: {issue.SeverityLevel}");
-                sb.AppendLine($"Element: {issue.ElementSnippet}");
-                sb.AppendLine($"Fix: {issue.SuggestedFix}");
-                if (!string.IsNullOrEmpty(issue.FixExample))
-                    sb.AppendLine($"Example: {issue.FixExample}");
+                sb.AppendLine($"Total Occurrences: {issue.Count}");
+                
+                // Show all unique instances instead of hiding them
+                var instances = issue.ElementInstances.Any() ? issue.ElementInstances : new List<string> { issue.ElementSnippet ?? "" };
+                for (int i = 0; i < instances.Count; i++)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine($"  Instance {i + 1}:");
+                    sb.AppendLine($"  Element: {instances[i]}");
+                    sb.AppendLine($"  Fix: {issue.SuggestedFix}");
+                    if (!string.IsNullOrEmpty(issue.FixExample))
+                        sb.AppendLine($"  Example: {issue.FixExample}");
+                }
                 sb.AppendLine("---");
             }
             File.WriteAllText(filePath, sb.ToString());

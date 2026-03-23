@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace AXIS_CORE.Models
 {
@@ -10,8 +11,10 @@ namespace AXIS_CORE.Models
         public string? ElementSnippet { get; set; }
         public string? SuggestedFix { get; set; }
         public Severity SeverityLevel { get; set; }
-        public string? FixExample { get; set; } // For bonus
+        public string? FixExample { get; set; }
         public Category Category { get; set; }
-        public int Count { get; set; } = 1; // For deduplication: tracks how many times this issue type occurs
+        public int Count { get; set; } = 1;
+        // Store multiple unique element instances for grouped display
+        public List<string> ElementInstances { get; set; } = new List<string>();
     }
 }

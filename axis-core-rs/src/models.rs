@@ -36,6 +36,8 @@ pub struct Issue {
     pub category: Category,
     /// Count of how many times this issue type occurs (for deduplication)
     pub count: usize,
+    /// Store multiple unique element instances for grouped display
+    pub element_instances: Vec<String>,
 }
 
 impl Issue {
@@ -55,12 +57,14 @@ impl Issue {
             fix_example: fix_example.map(|s| s.to_string()),
             category,
             count: 1,
+            element_instances: element_snippet.map(|s| vec![s.to_string()]).unwrap_or_default(),
         }
     }
 }
 
 impl Report {
-    /// Deduplicate issues by grouping identical issue types (by Type and Category only)
+    /// Deduplicate issues by grouping identical issue types (by Type and Category)
+    /// Preserves all unique element instances for detailed reporting
     pub fn deduplicate_issues(&mut self) {
         use std::collections::HashMap;
         let mut grouped: HashMap<(String, Category), Issue> = HashMap::new();
@@ -69,21 +73,27 @@ impl Report {
             let key = (issue.issue_type.clone(), issue.category.clone());
             if let Some(existing) = grouped.get_mut(&key) {
                 existing.count += 1;
+                // Add unique element to instances list
+                if let Some(ref element) = issue.element_snippet {
+                    if !existing.element_instances.contains(element) {
+                        existing.element_instances.push(element.clone());
+                    }
+                }
             } else {
                 let mut new_issue = issue.clone();
                 new_issue.count = 1;
-                if self.issues.iter().filter(|i| i.issue_type == issue.issue_type && i.category == issue.category).count() > 1 {
-                    new_issue.element_snippet = Some(format!("(and {} more occurrences)", new_issue.count));
-                }
+                // Initialize element_instances with this element
+                new_issue.element_instances = issue.element_snippet
+                    .as_ref()
+                    .map(|e| vec![e.clone()])
+                    .unwrap_or_default();
                 grouped.insert(key, new_issue);
             }
         }
         
-        // Update element snippet for all grouped items
+        // Update element snippet for backward compatibility
         for issue in grouped.values_mut() {
-            if issue.count > 1 {
-                issue.element_snippet = Some(format!("(and {} more occurrences)", issue.count - 1));
-            }
+            issue.element_snippet = issue.element_instances.first().map(|e| e.clone());
         }
         
         self.issues = grouped.into_values().collect();

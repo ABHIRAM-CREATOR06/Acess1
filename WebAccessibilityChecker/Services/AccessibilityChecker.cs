@@ -9,7 +9,8 @@ namespace WebAccessibilityChecker.Services
     {
         /// <summary>
         /// Deduplicates issues by grouping identical issue types together.
-        /// Groups by: Type only (ignores element differences).
+        /// Groups by: Type and Category.
+        /// Preserves all unique element instances for detailed reporting.
         /// </summary>
         private List<Issue> DeduplicateIssues(List<Issue> issues)
         {
@@ -19,11 +20,10 @@ namespace WebAccessibilityChecker.Services
                 {
                     var firstIssue = g.First();
                     firstIssue.Count = g.Count();
-                    // If there are multiple occurrences, update the element snippet to show count
-                    if (g.Count() > 1)
-                    {
-                        firstIssue.ElementSnippet = $"(and {g.Count() - 1} more occurrences)";
-                    }
+                    // Collect all unique element instances instead of hiding them
+                    firstIssue.ElementInstances = g.Select(i => i.ElementSnippet ?? "").Distinct().ToList();
+                    // Set the first element as the main element snippet for backward compatibility
+                    firstIssue.ElementSnippet = firstIssue.ElementInstances.FirstOrDefault();
                     return firstIssue;
                 })
                 .ToList();
