@@ -89,7 +89,7 @@ The audit logic lives in `Services/`. If you're adding a new WCAG check, that's 
 
 ## AXIS-CORE SDK
 
-The SDK is a separate package from the desktop app. It lives in its own directory and is published independently to NuGet, npm, and crates.io.
+The SDK is a separate package from the desktop app. It lives in its Axis-CORE [.NET],axis-core-js [npm version],axis-core-rs[cargo] and is published independently to NuGet, npm, and crates.io.
 
 If you're contributing to the SDK:
 
