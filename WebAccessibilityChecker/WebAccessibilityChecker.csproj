@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\icon_set\icon.ico</ApplicationIcon>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 

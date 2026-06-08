@@ -10,7 +10,14 @@ namespace AXIS_CORE.Services
 {
     public class HtmlParser
     {
-        private static readonly HttpClient httpClient = new HttpClient();
+        // Use SocketsHttpHandler for proper connection pooling and DNS refresh,
+        // preventing socket exhaustion under repeated checks.
+        private static readonly HttpClient httpClient = new HttpClient(new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(5),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
+            MaxConnectionsPerServer = 10,
+        });
 
         public async Task<HtmlDocument> LoadFromUrlAsync(string url)
         {
@@ -61,63 +68,68 @@ namespace AXIS_CORE.Services
         {
             try
             {
-                // Try to use system Chrome first, fallback to bundled version
                 var launchOptions = new LaunchOptions
                 {
                     Headless = true,
-                    Args = new[] { "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-accelerated-2d-canvas", "--no-first-run", "--no-zygote", "--single-process", "--disable-gpu" }
+                    Args = new[]
+                    {
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-accelerated-2d-canvas",
+                        "--no-first-run",
+                        "--no-zygote",
+                        "--single-process",
+                        "--disable-gpu"
+                    }
                 };
 
-                // Try system Chrome first
                 var chromePath = GetChromePath();
                 if (!string.IsNullOrEmpty(chromePath))
                 {
                     launchOptions.ExecutablePath = chromePath;
                 }
-                // If no system Chrome, PuppeteerSharp will download its own version
 
-                // Set timeout for browser launch
                 var browserTask = PuppeteerSharp.Puppeteer.LaunchAsync(launchOptions);
                 if (await Task.WhenAny(browserTask, Task.Delay(30000)) != browserTask)
-                {
                     throw new TimeoutException("Browser launch timeout");
-                }
 
                 await using var browser = await browserTask;
                 await using var page = await browser.NewPageAsync();
 
-                // Set page timeouts
                 page.DefaultTimeout = 30000;
                 page.DefaultNavigationTimeout = 30000;
 
                 var startTime = DateTime.Now;
 
-                // Navigate with timeout
-                var navigationTask = page.GoToAsync(url, new NavigationOptions { WaitUntil = new[] { WaitUntilNavigation.Networkidle0 } });
-                if (await Task.WhenAny(navigationTask, Task.Delay(45000)) != navigationTask)
+                // Navigate once and capture the response — eliminates the second navigation
+                // that was previously used just to read headers.
+                // DOMContentLoaded is used instead of Networkidle0: real-world sites with
+                // ads/analytics/polling never reach network idle and cause unnecessary delays.
+                var navigationTask = page.GoToAsync(url, new NavigationOptions
                 {
+                    WaitUntil = new[] { WaitUntilNavigation.DOMContentLoaded }
+                });
+
+                if (await Task.WhenAny(navigationTask, Task.Delay(45000)) != navigationTask)
                     throw new TimeoutException("Page navigation timeout");
-                }
 
-                await navigationTask;
+                var response = await navigationTask;
 
-                // Wait a bit for dynamic content
-                await Task.Delay(1000);
+                // Short fixed delay for dynamic content — previously baked into Networkidle0
+                await Task.Delay(500);
 
                 var loadTime = (DateTime.Now - startTime).TotalSeconds;
 
-                // Get content with timeout
                 var contentTask = page.GetContentAsync();
                 if (await Task.WhenAny(contentTask, Task.Delay(10000)) != contentTask)
-                {
                     throw new TimeoutException("Content retrieval timeout");
-                }
 
                 var content = await contentTask;
                 var doc = new HtmlDocument();
                 doc.LoadHtml(content);
 
-                // Get performance metrics safely
+                // Read performance metrics
                 int requestCount = 1;
                 long pageSize = content.Length;
 
@@ -131,26 +143,20 @@ namespace AXIS_CORE.Services
                 }
                 catch
                 {
-                    // Use fallback values if evaluation fails
                     requestCount = 1;
                     pageSize = content.Length;
                 }
 
-                // Check for compression and caching (simplified)
+                // Read headers from the FIRST navigation response — no second page.GoToAsync needed
                 bool isCompressed = false;
                 bool hasCachingHeaders = false;
 
-                try
+                if (response != null)
                 {
-                    var response = await page.GoToAsync(url);
-                    isCompressed = response.Headers.ContainsKey("content-encoding") &&
-                                 response.Headers["content-encoding"].Contains("gzip");
-                    hasCachingHeaders = response.Headers.ContainsKey("cache-control") ||
-                                      response.Headers.ContainsKey("expires");
-                }
-                catch
-                {
-                    // Use defaults if response check fails
+                    isCompressed = response.Headers.TryGetValue("content-encoding", out var encoding)
+                                   && encoding.Contains("gzip", StringComparison.OrdinalIgnoreCase);
+                    hasCachingHeaders = response.Headers.ContainsKey("cache-control")
+                                        || response.Headers.ContainsKey("expires");
                 }
 
                 return new PageLoadResult
@@ -165,7 +171,6 @@ namespace AXIS_CORE.Services
             }
             catch (Exception ex)
             {
-                // Fallback to simple HTTP download if headless fails
                 Console.WriteLine($"Headless browser failed: {ex.Message}. Falling back to HTTP download.");
                 try
                 {
@@ -182,7 +187,6 @@ namespace AXIS_CORE.Services
                 }
                 catch (Exception httpEx)
                 {
-                    // If even HTTP fails, create a minimal document
                     var doc = new HtmlDocument();
                     doc.LoadHtml($"<html><head><title>Loading Error</title></head><body><h1>Failed to Load Page</h1><p>Headless browser error: {ex.Message}</p><p>HTTP fallback error: {httpEx.Message}</p></body></html>");
                     return new PageLoadResult
@@ -200,7 +204,6 @@ namespace AXIS_CORE.Services
 
         private string? GetChromePath()
         {
-            // Common Chrome installation paths on Windows
             var paths = new[]
             {
                 @"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -214,7 +217,6 @@ namespace AXIS_CORE.Services
                     return path;
             }
 
-            // Return null to let PuppeteerSharp download its own version
             return null;
         }
     }
