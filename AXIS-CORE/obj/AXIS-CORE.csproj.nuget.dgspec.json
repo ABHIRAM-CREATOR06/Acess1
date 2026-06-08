@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {}
   },
   "projects": {
-    "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
+    "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj": {
       "version": "1.2.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectUniqueName": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "projectName": "AXIS-CORE",
-        "projectPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
+        "projectPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\AXIS-CORE.csproj",
         "packagesPath": "C:\\Users\\abhir\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
+        "outputPath": "C:\\Users\\abhir\\OneDrive\\Documents\\GitHub\\Acess1\\AXIS-CORE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\abhir\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -79,15 +79,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
+              "version": "[8.0.27, 8.0.27]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
+              "version": "[8.0.27, 8.0.27]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
+              "version": "[8.0.27, 8.0.27]"
             }
           ],
           "frameworkReferences": {
@@ -95,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.314/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

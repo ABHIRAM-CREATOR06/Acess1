@@ -80,9 +80,11 @@ namespace AXIS_CORE
             using var stream = assembly.GetManifestResourceStream("AXIS_CORE.Resources.logo.png");
             if (stream == null) return Array.Empty<byte>();
 
-            var bytes = new byte[stream.Length];
-            stream.Read(bytes, 0, bytes.Length);
-            return bytes;
+            // CopyTo guarantees all bytes are read, regardless of stream size.
+            // stream.Read() is not guaranteed to fill the buffer in a single call.
+            using var ms = new System.IO.MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
         }
     }
 }

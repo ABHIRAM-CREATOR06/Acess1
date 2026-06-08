@@ -17,8 +17,15 @@ namespace AXIS_CORE.Services
             var issues = new List<Issue>();
             issues.AddRange(CheckMetaTags(doc));
             issues.AddRange(CheckHeadings(doc));
-            issues.AddRange(await CheckRobotsTxtAsync(url));
-            issues.AddRange(await CheckSitemapAsync(url));
+
+            // Run robots.txt and sitemap checks in parallel — they are independent HTTP requests.
+            // Previously sequential, this cuts SEO check network time roughly in half.
+            var robotsTask = CheckRobotsTxtAsync(url);
+            var sitemapTask = CheckSitemapAsync(url);
+            await Task.WhenAll(robotsTask, sitemapTask);
+
+            issues.AddRange(await robotsTask);
+            issues.AddRange(await sitemapTask);
             issues.AddRange(CheckSchemaOrg(doc));
             return issues;
         }

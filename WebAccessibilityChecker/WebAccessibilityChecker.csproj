@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -19,6 +19,9 @@
 
   <ItemGroup>
     <Resource Include="Resources\accessibility.ico" />
+    <!-- icon_set/icon.ico linked as an embedded resource so it is baked into the
+         assembly and available at runtime via pack URI regardless of publish layout -->
+    <Resource Include="..\icon_set\icon.ico" Link="Resources\icon.ico" />
   </ItemGroup>
 
 </Project>

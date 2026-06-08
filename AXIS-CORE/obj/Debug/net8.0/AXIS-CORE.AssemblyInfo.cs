@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("AXIS-CORE SDK for programmatic web accessibility checking")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.2.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.2.0+0897c330861a04fa97041ec4332f78e33b1f5c9a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.2.0+0edbf82b6c076ec0c8e8d18e770caa5ae4d06384")]
 [assembly: System.Reflection.AssemblyProductAttribute("AXIS-CORE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AXIS-CORE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.2.0.0")]

@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 using AXIS_CORE.Models;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -72,66 +73,11 @@ namespace AXIS_CORE.Utils
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Exports a report to a text file. Delegates to <see cref="ExportToText"/> to avoid duplication.
+        /// </summary>
         public void ExportToTxt(Report report, string filePath)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("Web Accessibility Report");
-            sb.AppendLine($"Website: {report.WebsiteUrl}");
-            sb.AppendLine($"Total Issues: {report.TotalIssues}");
-            sb.AppendLine($"Errors: {report.ErrorCount}, Warnings: {report.WarningCount}, Info: {report.InfoCount}");
-            sb.AppendLine($"Accessibility Score: {report.AccessibilityScore}/100");
-            sb.AppendLine($"SEO Score: {report.SEOScore}/100");
-            sb.AppendLine($"Performance Score: {report.PerformanceScore}/100");
-            sb.AppendLine($"Best Practices Score: {report.BestPracticesScore}/100");
-            sb.AppendLine($"Environment Score: {report.EnvironmentScore}/100");
-            sb.AppendLine($"Safety Score: {report.SafetyScore}/100");
-            sb.AppendLine($"Compliance Status: {report.ComplianceStatus}");
-
-            // Add category breakdown
-            sb.AppendLine();
-            sb.AppendLine("Category Breakdown:");
-            var categoryCounts = report.Issues
-                .GroupBy(i => i.Category)
-                .Select(g => $"{g.Key}: {g.Count()} issues")
-                .ToList();
-            foreach (var category in categoryCounts)
-            {
-                sb.AppendLine($"- {category}");
-            }
-            if (report.PageLoadTime > 0)
-            {
-                sb.AppendLine($"Page Load Time: {report.PageLoadTime:F2}s");
-                sb.AppendLine($"Request Count: {report.RequestCount}");
-                sb.AppendLine($"Page Size: {FormatBytes(report.PageSize)}");
-                sb.AppendLine($"Uses CDN: {(report.UsesCDN ? "Yes" : "No")}");
-                sb.AppendLine($"Energy Consumption: {report.EnergyConsumptionKWh:F4} kWh per page load");
-                sb.AppendLine($"CO₂ Emissions: {report.CO2EmissionsGrams:F2} grams per page load");
-                sb.AppendLine($"Environmental Rating: {report.EnvironmentalRating}");
-            }
-            sb.AppendLine();
-
-            foreach (var issue in report.Issues)
-            {
-                sb.AppendLine($"Category: {issue.Category}");
-                sb.AppendLine($"Type: {issue.Type}");
-                sb.AppendLine($"Severity: {issue.SeverityLevel}");
-                sb.AppendLine($"Total Occurrences: {issue.Count}");
-                
-                // Show all unique instances instead of hiding them
-                var instances = issue.ElementInstances.Any() ? issue.ElementInstances : new List<string> { issue.ElementSnippet ?? "" };
-                for (int i = 0; i < instances.Count; i++)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine($"  Instance {i + 1}:");
-                    sb.AppendLine($"  Element: {instances[i]}");
-                    sb.AppendLine($"  Fix: {issue.SuggestedFix}");
-                    if (!string.IsNullOrEmpty(issue.FixExample))
-                        sb.AppendLine($"  Example: {issue.FixExample}");
-                }
-                sb.AppendLine("---");
-            }
-            File.WriteAllText(filePath, sb.ToString());
-        }
+            => File.WriteAllText(filePath, ExportToText(report));
 
         public static byte[] ExportToPdf(Report report)
         {
@@ -193,63 +139,11 @@ namespace AXIS_CORE.Utils
             return stream.ToArray();
         }
 
+        /// <summary>
+        /// Exports a report to a PDF file. Delegates to <see cref="ExportToPdf(Report)"/> to avoid duplication.
+        /// </summary>
         public void ExportToPdf(Report report, string filePath)
-        {
-            Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(2, Unit.Centimetre);
-                    page.Header().Text("Web Accessibility Report").FontSize(20).Bold();
-                    page.Content().Column(col =>
-                    {
-                        col.Item().Text($"Website: {report.WebsiteUrl}").FontSize(14);
-                        col.Item().Text($"Total Issues: {report.TotalIssues}").FontSize(14);
-                        col.Item().Text($"Accessibility Score: {report.AccessibilityScore}/100").FontSize(14);
-                        col.Item().Text($"SEO Score: {report.SEOScore}/100").FontSize(14);
-                        col.Item().Text($"Performance Score: {report.PerformanceScore}/100").FontSize(14);
-                        col.Item().Text($"Best Practices Score: {report.BestPracticesScore}/100").FontSize(14);
-                        col.Item().Text($"Environment Score: {report.EnvironmentScore}/100").FontSize(14);
-                        col.Item().Text($"Safety Score: {report.SafetyScore}/100").FontSize(14);
-                        col.Item().Text($"Compliance Status: {report.ComplianceStatus}").FontSize(14);
-
-                        // Add category breakdown
-                        col.Item().Text("").FontSize(12);
-                        col.Item().Text("Category Breakdown:").Bold().FontSize(14);
-                        var categoryCounts = report.Issues
-                            .GroupBy(i => i.Category)
-                            .Select(g => $"{g.Key}: {g.Count()} issues")
-                            .ToList();
-                        foreach (var category in categoryCounts)
-                        {
-                            col.Item().Text($"- {category}").FontSize(12);
-                        }
-                        if (report.PageLoadTime > 0)
-                        {
-                            col.Item().Text($"Page Load Time: {report.PageLoadTime:F2}s").FontSize(12);
-                            col.Item().Text($"Request Count: {report.RequestCount}").FontSize(12);
-                            col.Item().Text($"Page Size: {FormatBytes(report.PageSize)}").FontSize(12);
-                            col.Item().Text($"Uses CDN: {(report.UsesCDN ? "Yes" : "No")}").FontSize(12);
-                            col.Item().Text($"Energy Consumption: {report.EnergyConsumptionKWh:F4} kWh").FontSize(12);
-                            col.Item().Text($"CO₂ Emissions: {report.CO2EmissionsGrams:F2} grams").FontSize(12);
-                            col.Item().Text($"Environmental Rating: {report.EnvironmentalRating}").FontSize(12);
-                        }
-                        col.Item().Text("").FontSize(12);
-                        col.Item().Text("Issues:").Bold().FontSize(16);
-                        foreach (var issue in report.Issues)
-                        {
-                            col.Item().Text($"{issue.Category} - {issue.Type} - {issue.SeverityLevel}").FontSize(12).Bold();
-                            col.Item().Text($"Element: {issue.ElementSnippet}").FontSize(10);
-                            col.Item().Text($"Fix: {issue.SuggestedFix}").FontSize(10);
-                            if (!string.IsNullOrEmpty(issue.FixExample))
-                                col.Item().Text($"Example: {issue.FixExample}").FontSize(10);
-                            col.Item().Text("---").FontSize(10);
-                        }
-                    });
-                });
-            }).GeneratePdf(filePath);
-        }
+            => File.WriteAllBytes(filePath, ExportToPdf(report));
 
         public void ExportToHtml(Report report, string filePath)
         {
