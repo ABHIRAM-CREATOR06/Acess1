@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,6 +13,8 @@ namespace AXIS_CORE.Models
         public int ErrorCount => Issues.Count(i => i.SeverityLevel == Severity.Error);
         public int WarningCount => Issues.Count(i => i.SeverityLevel == Severity.Warning);
         public int InfoCount => Issues.Count(i => i.SeverityLevel == Severity.Info);
+        public int ResolvedCount => Issues.Count(i => i.IsResolved);
+
         public int AccessibilityScore { get; set; }
         public int SEOScore { get; set; }
         public int PerformanceScore { get; set; }
@@ -30,5 +33,24 @@ namespace AXIS_CORE.Models
         public double EnergyConsumptionKWh { get; set; } // Estimated energy use in kWh per page load
         public double CO2EmissionsGrams { get; set; } // CO₂ emissions in grams per page load
         public string? EnvironmentalRating { get; set; } // Eco, Moderate, High Impact
+
+        // Audit Metadata
+        public DateTime AnalyzedAt { get; set; } = DateTime.Now;
+
+        // Automated Score & Rating
+        public int OverallScore => (int)Math.Clamp(
+            Math.Round((AccessibilityScore * 0.40) + (SEOScore * 0.15) + (PerformanceScore * 0.15) + 
+                       (BestPracticesScore * 0.10) + (EnvironmentScore * 0.10) + (SafetyScore * 0.10)), 
+            0, 100);
+
+        public string OverallGrade => OverallScore switch
+        {
+            >= 90 => "A+",
+            >= 80 => "A",
+            >= 70 => "B",
+            >= 60 => "C",
+            >= 50 => "D",
+            _ => "F"
+        };
     }
 }

@@ -21,9 +21,11 @@ namespace WebAccessibilityChecker.Services
                     var firstIssue = g.First();
                     firstIssue.Count = g.Count();
                     // Collect all unique element instances instead of hiding them
-                    firstIssue.ElementInstances = g.Select(i => i.ElementSnippet ?? "").Distinct().ToList();
+                    firstIssue.ElementInstances = g.Select(i => i.ElementSnippet ?? "").Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
                     // Set the first element as the main element snippet for backward compatibility
-                    firstIssue.ElementSnippet = firstIssue.ElementInstances.FirstOrDefault();
+                    firstIssue.ElementSnippet = firstIssue.ElementInstances.FirstOrDefault() ?? firstIssue.ElementSnippet;
+                    firstIssue.WcagGuideline ??= g.FirstOrDefault(i => !string.IsNullOrEmpty(i.WcagGuideline))?.WcagGuideline;
+                    firstIssue.Impact ??= g.FirstOrDefault(i => !string.IsNullOrEmpty(i.Impact))?.Impact;
                     return firstIssue;
                 })
                 .ToList();
@@ -62,10 +64,20 @@ namespace WebAccessibilityChecker.Services
             report.Issues.AddRange(CheckEnvironment(doc, loadResult));
             report.Issues.AddRange(CheckSafety(doc, loadResult, report.WebsiteUrl));
             report.Issues.AddRange(CheckTargetSize(doc));
-            report.Issues.AddRange(CheckRedundantEntry(doc));
+            report.Issues.AddRange(CheckInputPurposeAutocomplete(doc));
+            report.Issues.AddRange(CheckEmptyLinks(doc));
+            report.Issues.AddRange(CheckEmptyButtons(doc));
+            report.Issues.AddRange(CheckDuplicateIds(doc));
+            report.Issues.AddRange(CheckViewportScalability(doc));
+            report.Issues.AddRange(CheckLandmarks(doc));
+            report.Issues.AddRange(CheckTableAccessibility(doc));
+            report.Issues.AddRange(CheckAudioVideoAutoplay(doc));
 
             // Add performance issues
             report.Issues.AddRange(CheckPerformance(loadResult));
+
+            // Enrich issue metadata with WCAG guidelines and impact
+            EnrichIssueMetadata(report.Issues);
 
             // Deduplicate issues before calculating score
             report.Issues = DeduplicateIssues(report.Issues);
@@ -103,11 +115,11 @@ namespace WebAccessibilityChecker.Services
                                 safetyIssues.Count(i => i.SeverityLevel == Severity.Info) * 1;
             report.SafetyScore = Math.Max(0, 100 - safetyPenalty);
 
-            // Overall compliance based on accessibility for now
-            if (report.AccessibilityScore >= 95) report.ComplianceStatus = "Fully Compliant";
-            else if (report.AccessibilityScore >= 80) report.ComplianceStatus = "Mostly Compliant";
-            else if (report.AccessibilityScore >= 60) report.ComplianceStatus = "Partially Compliant";
-            else report.ComplianceStatus = "Not Compliant";
+            // Overall automated scan status - automated scans cannot certify conformance
+            if (report.AccessibilityScore >= 95) report.ComplianceStatus = "Low Automated Issues (Manual Review Required)";
+            else if (report.AccessibilityScore >= 80) report.ComplianceStatus = "Minor Violations (Manual Review Required)";
+            else if (report.AccessibilityScore >= 60) report.ComplianceStatus = "Partial Conformance (Remediation Needed)";
+            else report.ComplianceStatus = "Critical Violations Found (Action Required)";
 
             return report;
         }
@@ -1009,10 +1021,10 @@ namespace WebAccessibilityChecker.Services
             return issues;
         }
 
-        private List<Issue> CheckRedundantEntry(HtmlDocument doc)
+        private List<Issue> CheckInputPurposeAutocomplete(HtmlDocument doc)
         {
             var issues = new List<Issue>();
-            var inputs = doc.DocumentNode.SelectNodes("//input[@type='text'] | //input[@type='email'] | //input[not(@type)]");
+            var inputs = doc.DocumentNode.SelectNodes("//input[@type='text'] | //input[@type='email'] | //input[@type='tel'] | //input[not(@type)]");
             if (inputs != null)
             {
                 foreach (var input in inputs)
@@ -1027,18 +1039,343 @@ namespace WebAccessibilityChecker.Services
                         {
                             issues.Add(new Issue
                             {
-                                Type = "Redundant Entry Risk (WCAG 2.2)",
-                                ElementSnippet = input.OuterHtml,
-                                SuggestedFix = "Add 'autocomplete' attribute to fields requesting user data (WCAG 3.3.7 Redundant Entry)",
+                                Type = "Missing Autocomplete Token (WCAG 1.3.5)",
+                                ElementSnippet = input.OuterHtml.Length > 200 ? input.OuterHtml.Substring(0, 197) + "..." : input.OuterHtml,
+                                SuggestedFix = "Add standard 'autocomplete' attribute tokens (e.g. 'name', 'email', 'tel', 'street-address') to identify input purpose (WCAG 1.3.5 Identify Input Purpose)",
                                 SeverityLevel = Severity.Warning,
-                                FixExample = "<input type=\"text\" name=\"email\" autocomplete=\"email\">",
-                                Category = Category.Accessibility
+                                FixExample = "<input type=\"email\" name=\"email\" autocomplete=\"email\">",
+                                Category = Category.Accessibility,
+                                WcagGuideline = "WCAG 2.2 SC 1.3.5 Identify Input Purpose (Level AA)",
+                                Impact = "Moderate"
                             });
                         }
                     }
                 }
             }
             return issues;
+        }
+
+        private List<Issue> CheckEmptyLinks(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var links = doc.DocumentNode.SelectNodes("//a[@href]");
+            if (links != null)
+            {
+                foreach (var link in links)
+                {
+                    // Skip hidden links
+                    if (link.Attributes["aria-hidden"]?.Value?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                        continue;
+
+                    string text = link.InnerText?.Trim() ?? "";
+                    string ariaLabel = link.Attributes["aria-label"]?.Value?.Trim() ?? "";
+                    string ariaLabelledBy = link.Attributes["aria-labelledby"]?.Value?.Trim() ?? "";
+                    string title = link.Attributes["title"]?.Value?.Trim() ?? "";
+                    bool hasImgWithAlt = link.SelectNodes(".//img[@alt and string-length(@alt) > 0]") != null;
+                    bool hasSvgWithAria = link.SelectNodes(".//svg[@aria-label or @aria-labelledby or .//title]") != null;
+                    bool hasChildWithLabel = link.SelectNodes(".//*[@aria-label or @title]") != null;
+
+                    if (string.IsNullOrEmpty(text) && string.IsNullOrEmpty(ariaLabel) && string.IsNullOrEmpty(ariaLabelledBy) && 
+                        string.IsNullOrEmpty(title) && !hasImgWithAlt && !hasSvgWithAria && !hasChildWithLabel)
+                    {
+                        issues.Add(new Issue
+                        {
+                            Type = "Empty or Unlabeled Link",
+                            ElementSnippet = link.OuterHtml.Length > 200 ? link.OuterHtml.Substring(0, 197) + "..." : link.OuterHtml,
+                            SuggestedFix = "Provide descriptive link text, an 'aria-label', or descriptive alt text on child images to clarify the link purpose",
+                            SeverityLevel = Severity.Error,
+                            FixExample = "<a href=\"/dashboard\" aria-label=\"User Dashboard\"><i class=\"icon-dash\"></i></a>",
+                            Category = Category.Accessibility,
+                            WcagGuideline = "WCAG 2.2 SC 2.4.4 Link Purpose (In Context) (Level A)",
+                            Impact = "Critical"
+                        });
+                    }
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckEmptyButtons(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var buttons = doc.DocumentNode.SelectNodes("//button | //input[@type='button' or @type='submit' or @type='reset']");
+            if (buttons != null)
+            {
+                foreach (var btn in buttons)
+                {
+                    // Skip hidden buttons
+                    if (btn.Attributes["aria-hidden"]?.Value?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                        continue;
+
+                    // If it's an input button, check value attribute
+                    if (btn.Name.Equals("input", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string val = btn.Attributes["value"]?.Value?.Trim() ?? "";
+                        string ariaLabelInput = btn.Attributes["aria-label"]?.Value?.Trim() ?? "";
+                        string ariaLabelledByInput = btn.Attributes["aria-labelledby"]?.Value?.Trim() ?? "";
+                        if (string.IsNullOrEmpty(val) && string.IsNullOrEmpty(ariaLabelInput) && string.IsNullOrEmpty(ariaLabelledByInput))
+                        {
+                            issues.Add(new Issue
+                            {
+                                Type = "Unlabeled Input Button",
+                                ElementSnippet = btn.OuterHtml.Length > 200 ? btn.OuterHtml.Substring(0, 197) + "..." : btn.OuterHtml,
+                                SuggestedFix = "Add a descriptive 'value' attribute or 'aria-label' to the button input",
+                                SeverityLevel = Severity.Error,
+                                FixExample = "<input type=\"submit\" value=\"Submit Form\">",
+                                Category = Category.Accessibility,
+                                WcagGuideline = "WCAG 2.2 SC 4.1.2 Name, Role, Value (Level A)",
+                                Impact = "Critical"
+                            });
+                        }
+                        continue;
+                    }
+
+                    string text = btn.InnerText?.Trim() ?? "";
+                    string ariaLabel = btn.Attributes["aria-label"]?.Value?.Trim() ?? "";
+                    string ariaLabelledBy = btn.Attributes["aria-labelledby"]?.Value?.Trim() ?? "";
+                    string title = btn.Attributes["title"]?.Value?.Trim() ?? "";
+                    
+                    // Child elements providing accessible names
+                    bool hasImgWithAlt = btn.SelectNodes(".//img[@alt and string-length(@alt) > 0]") != null;
+                    bool hasSvgWithAria = btn.SelectNodes(".//svg[@aria-label or @aria-labelledby or .//title]") != null;
+                    bool hasChildWithAria = btn.SelectNodes(".//*[@aria-label or @title]") != null;
+
+                    if (string.IsNullOrEmpty(text) && string.IsNullOrEmpty(ariaLabel) && string.IsNullOrEmpty(ariaLabelledBy) && 
+                        string.IsNullOrEmpty(title) && !hasImgWithAlt && !hasSvgWithAria && !hasChildWithAria)
+                    {
+                        issues.Add(new Issue
+                        {
+                            Type = "Unlabeled Button",
+                            ElementSnippet = btn.OuterHtml.Length > 200 ? btn.OuterHtml.Substring(0, 197) + "..." : btn.OuterHtml,
+                            SuggestedFix = "Add visible button text, an 'aria-label', or 'aria-labelledby' attribute to define its accessible name",
+                            SeverityLevel = Severity.Error,
+                            FixExample = "<button type=\"button\" aria-label=\"Close dialog\">×</button>",
+                            Category = Category.Accessibility,
+                            WcagGuideline = "WCAG 2.2 SC 4.1.2 Name, Role, Value (Level A)",
+                            Impact = "Critical"
+                        });
+                    }
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckDuplicateIds(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var elementsWithId = doc.DocumentNode.SelectNodes("//*[@id]");
+            if (elementsWithId != null)
+            {
+                var idGroups = elementsWithId
+                    .GroupBy(n => n.Attributes["id"]?.Value?.Trim() ?? "")
+                    .Where(g => !string.IsNullOrEmpty(g.Key) && g.Count() > 1);
+
+                foreach (var group in idGroups)
+                {
+                    issues.Add(new Issue
+                    {
+                        Type = "Duplicate ID Attribute",
+                        ElementSnippet = $"id=\"{group.Key}\" found on {group.Count()} elements",
+                        SuggestedFix = "Element IDs must be unique across the document. Duplicates break form associations (<label for>) and ARIA references (aria-labelledby, aria-describedby).",
+                        SeverityLevel = Severity.Error,
+                        FixExample = "Ensure each ID is unique (e.g. id=\"user-nav\", id=\"mobile-nav\")",
+                        Category = Category.Accessibility,
+                        WcagGuideline = "WCAG 2.2 SC 1.3.1 Info and Relationships / SC 4.1.2 Name, Role, Value (Level A)",
+                        Impact = "Serious"
+                    });
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckViewportScalability(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var viewportMeta = doc.DocumentNode.SelectSingleNode("//meta[@name='viewport']");
+            if (viewportMeta != null)
+            {
+                string content = viewportMeta.Attributes["content"]?.Value?.ToLower() ?? "";
+                if (content.Contains("user-scalable=no") || content.Contains("maximum-scale=1") || content.Contains("user-scalable=0"))
+                {
+                    issues.Add(new Issue
+                    {
+                        Type = "Pinch-to-Zoom Disabled",
+                        ElementSnippet = viewportMeta.OuterHtml,
+                        SuggestedFix = "Do not disable user zooming; remove 'user-scalable=no' and 'maximum-scale=1' to allow low-vision users to resize content (WCAG 1.4.4 Resize Text)",
+                        SeverityLevel = Severity.Error,
+                        FixExample = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
+                        Category = Category.Accessibility,
+                        WcagGuideline = "WCAG 2.2 SC 1.4.4 Resize Text (Level AA)",
+                        Impact = "Critical"
+                    });
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckLandmarks(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var mainLandmark = doc.DocumentNode.SelectSingleNode("//main | //*[@role='main']");
+            if (mainLandmark == null)
+            {
+                issues.Add(new Issue
+                {
+                    Type = "Missing Main Landmark",
+                    ElementSnippet = "<body>...</body>",
+                    SuggestedFix = "Wrap the primary page content inside a <main> element or add role=\"main\" to provide a landmark bypass block for screen reader users (WCAG 2.4.1 Bypass Blocks)",
+                    SeverityLevel = Severity.Warning,
+                    FixExample = "<main id=\"main-content\">...</main>",
+                    Category = Category.Accessibility,
+                    WcagGuideline = "WCAG 2.2 SC 2.4.1 Bypass Blocks (Level A) / Best Practice",
+                    Impact = "Moderate"
+                });
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckTableAccessibility(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var tables = doc.DocumentNode.SelectNodes("//table");
+            if (tables != null)
+            {
+                foreach (var table in tables)
+                {
+                    // Ignore layout tables explicitly marked with role="presentation" or role="none"
+                    string role = table.Attributes["role"]?.Value?.Trim().ToLowerInvariant() ?? "";
+                    if (role == "presentation" || role == "none") continue;
+
+                    // Skip hidden tables
+                    if (table.Attributes["aria-hidden"]?.Value?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+                        continue;
+
+                    // If table has no rows, skip
+                    var rows = table.SelectNodes(".//tr");
+                    if (rows == null || rows.Count == 0) continue;
+
+                    var headers = table.SelectNodes(".//th");
+                    if (headers == null || headers.Count == 0)
+                    {
+                        // Check if role="columnheader" or role="rowheader" are used instead of <th>
+                        var roleHeaders = table.SelectNodes(".//*[@role='columnheader' or @role='rowheader']");
+                        if (roleHeaders != null && roleHeaders.Count > 0) continue;
+
+                        issues.Add(new Issue
+                        {
+                            Type = "Data Table Missing Header (<th>)",
+                            ElementSnippet = table.OuterHtml.Length > 200 ? table.OuterHtml.Substring(0, 197) + "..." : table.OuterHtml,
+                            SuggestedFix = "Data tables must include <th> header cells (or role=\"columnheader\"). If this table is used strictly for layout, mark it with role=\"presentation\" or role=\"none\".",
+                            SeverityLevel = Severity.Warning,
+                            FixExample = "<table><thead><tr><th scope=\"col\">Header</th></tr></thead><tbody>...</tbody></table>",
+                            Category = Category.Accessibility,
+                            WcagGuideline = "WCAG 2.2 SC 1.3.1 Info and Relationships (Level A)",
+                            Impact = "Moderate"
+                        });
+                    }
+                }
+            }
+            return issues;
+        }
+
+        private List<Issue> CheckAudioVideoAutoplay(HtmlDocument doc)
+        {
+            var issues = new List<Issue>();
+            var mediaElements = doc.DocumentNode.SelectNodes("//video[@autoplay] | //audio[@autoplay]");
+            if (mediaElements != null)
+            {
+                foreach (var media in mediaElements)
+                {
+                    bool hasControls = media.Attributes.Contains("controls");
+                    bool isMuted = media.Attributes.Contains("muted");
+
+                    // Video or audio that is muted produces no sound and therefore does not violate WCAG 1.4.2 Audio Control
+                    if (isMuted) continue;
+                    if (hasControls) continue;
+
+                    issues.Add(new Issue
+                    {
+                        Type = "Autoplaying Audio Without Controls",
+                        ElementSnippet = media.OuterHtml.Length > 200 ? media.OuterHtml.Substring(0, 197) + "..." : media.OuterHtml,
+                        SuggestedFix = "Audio that plays automatically for more than 3 seconds must have user controls to pause or stop it, or must be muted by default (WCAG 1.4.2 Audio Control)",
+                        SeverityLevel = Severity.Error,
+                        FixExample = "<video autoplay muted controls>...</video>",
+                        Category = Category.Accessibility,
+                        WcagGuideline = "WCAG 2.2 SC 1.4.2 Audio Control (Level A)",
+                        Impact = "Critical"
+                    });
+                }
+            }
+            return issues;
+        }
+
+        public void EnrichIssueMetadata(List<Issue> issues)
+        {
+            foreach (var issue in issues)
+            {
+                if (string.IsNullOrEmpty(issue.WcagGuideline))
+                {
+                    string t = issue.Type ?? "";
+                    if (t.Contains("Alt Text"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.1.1 Non-text Content (Level A)";
+                    else if (t.Contains("Label"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.3.1 Info & Relationships, SC 3.3.2 Labels (Level A)";
+                    else if (t.Contains("Title"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 2.4.2 Page Titled (Level A)";
+                    else if (t.Contains("Heading"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.3.1 Info and Relationships (Level A)";
+                    else if (t.Contains("Contrast"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.4.3 Contrast (Minimum) (Level AA)";
+                    else if (t.Contains("Eye Comfort"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.4.8 Visual Presentation (Level AAA)";
+                    else if (t.Contains("ARIA"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 4.1.2 Name, Role, Value (Level A)";
+                    else if (t.Contains("Language") || t.Contains("lang"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 3.1.1 Language of Page (Level A)";
+                    else if (t.Contains("Target Size"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 2.5.8 Target Size (Minimum) (Level AA)";
+                    else if (t.Contains("Autocomplete") || t.Contains("Redundant Entry"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.3.5 Identify Input Purpose (Level AA)";
+                    else if (t.Contains("Zoom") || t.Contains("Scalab"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.4.4 Resize Text (Level AA)";
+                    else if (t.Contains("Link"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 2.4.4 Link Purpose (In Context) (Level A)";
+                    else if (t.Contains("Button"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 4.1.2 Name, Role, Value (Level A)";
+                    else if (t.Contains("ID"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.3.1 Info & Relationships / SC 4.1.2 Name, Role, Value (Level A)";
+                    else if (t.Contains("Landmark"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 2.4.1 Bypass Blocks (Level A) / Best Practice";
+                    else if (t.Contains("Table"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.3.1 Info and Relationships (Level A)";
+                    else if (t.Contains("Autoplay") || t.Contains("Audio"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.4.2 Audio Control (Level A)";
+                    else if (t.Contains("Mobile") || t.Contains("Responsive"))
+                        issue.WcagGuideline = "WCAG 2.2 SC 1.4.10 Reflow (Level AA)";
+                    else
+                    {
+                        issue.WcagGuideline = issue.Category switch
+                        {
+                            Category.Accessibility => "WCAG 2.2 & Section 508 / RPwD Act 2016",
+                            Category.SEO => "Core Discoverability & Search Quality Standards",
+                            Category.Performance => "Core Web Vitals & Performance Standards",
+                            Category.Environment => "Sustainable Web Design Standards (W3C)",
+                            Category.Safety => "OWASP Web Security & Content Standards",
+                            _ => "W3C Web Standards"
+                        };
+                    }
+                }
+
+                if (string.IsNullOrEmpty(issue.Impact))
+                {
+                    issue.Impact = issue.SeverityLevel switch
+                    {
+                        Severity.Error => "Critical",
+                        Severity.Warning => "Serious",
+                        _ => "Minor"
+                    };
+                }
+            }
         }
     }
 }

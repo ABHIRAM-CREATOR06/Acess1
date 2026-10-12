@@ -6,455 +6,679 @@
         xmlns:local="clr-namespace:WebAccessibilityChecker"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="🚀 Web Accessibility Checker" Height="800" Width="1200"
+        Title="🚀 AXIS Accessibility Studio — Modern Web Quality &amp; Compliance Checker"
+        Height="920" Width="1440"
+        MinHeight="750" MinWidth="1100"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F7FA"
-        FontFamily="Segoe UI"
+        FontFamily="Segoe UI, Inter, Arial, sans-serif"
         Icon="/Resources/icon.ico">
+
     <Window.Resources>
-        <Style x:Key="ModernButton" TargetType="Button">
-            <Setter Property="Background">
+        <!-- Dynamic Theme Color Brushes -->
+        <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0B0F19"/>
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#151D2A"/>
+        <SolidColorBrush x:Key="CardHeaderBrush" Color="#1C273A"/>
+        <SolidColorBrush x:Key="CardBorderBrush" Color="#243044"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#94A3B8"/>
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B"/>
+        <SolidColorBrush x:Key="InputBackgroundBrush" Color="#101827"/>
+        <SolidColorBrush x:Key="InputBorderBrush" Color="#2E3D52"/>
+        <SolidColorBrush x:Key="CodeBoxBackgroundBrush" Color="#090D16"/>
+        <SolidColorBrush x:Key="CodeBoxBorderBrush" Color="#1E293B"/>
+
+        <!-- Primary Accent Gradient -->
+        <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0284C7" Offset="0"/>
+            <GradientStop Color="#0369A1" Offset="1"/>
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="SuccessAccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#10B981" Offset="0"/>
+            <GradientStop Color="#059669" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Modern Card Style -->
+        <Style x:Key="ModernCard" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Effect">
                 <Setter.Value>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#007ACC" Offset="0"/>
-                        <GradientStop Color="#005A9E" Offset="1"/>
-                    </LinearGradientBrush>
+                    <DropShadowEffect Color="#000000" Opacity="0.3" ShadowDepth="3" BlurRadius="12"/>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- Primary Action Button -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Padding" Value="18,9"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="25">
+                        <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.8"/>
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.9"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Opacity" Value="0.6"/>
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="btnBorder" Property="Opacity" Value="0.4"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="CardBorder" TargetType="Border">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#FFFFFF" Offset="0"/>
-                        <GradientStop Color="#F8F9FA" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderBrush" Value="#E1E5E9"/>
+
+        <!-- Secondary Outline Button -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#1E293B"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="15"/>
-            <Setter Property="Effect">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="14,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
                 <Setter.Value>
-                    <DropShadowEffect Color="#000000" Opacity="0.2" ShadowDepth="5" BlurRadius="10"/>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="secBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="secBorder" Property="Background" Value="#334155"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="secBorder" Property="Background" Value="#0F172A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Storyboard x:Key="LoadingAnimation">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1" RepeatBehavior="Forever" AutoReverse="True"/>
-        </Storyboard>
+
+        <!-- Filter Pill Button -->
+        <Style x:Key="FilterChipButton" TargetType="Button">
+            <Setter Property="Background" Value="#1C273A"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="chipBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="chipBorder" Property="BorderBrush" Value="#38BDF8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Export Action Button -->
+        <Style x:Key="ExportButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
     </Window.Resources>
-    <Grid Background="#F5F7FA">
+
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
         <Grid.RowDefinitions>
+            <!-- Top App Bar -->
             <RowDefinition Height="Auto"/>
+            <!-- Input & Audit Launchpad -->
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4*"/>
+            <!-- Score & Health Dashboard -->
+            <RowDefinition Height="Auto"/>
+            <!-- Main Content: DataGrid + Inspection Sight Studio -->
+            <RowDefinition Height="*"/>
+            <!-- Footer Action & Export Bar -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="20,20,20,10" Padding="20">
-            <StackPanel>
-                <TextBlock Text="🌐 Web Accessibility Checker" FontSize="24" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <TextBlock Text="Analyze websites for accessibility compliance with WCAG, Section 508, and RPwD Act" FontSize="14" Foreground="#7F8C8D"/>
-            </StackPanel>
-        </Border>
-
-        <!-- Input Section -->
-        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
-            <StackPanel>
-                <TextBlock Text="📝 Input" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="UrlTextBox" Width="500" Height="35" Margin="0,0,10,0"
-                              FontSize="14" Padding="10,0,0,0" VerticalContentAlignment="Center"
-                              BorderBrush="#BDC3C7" BorderThickness="1" Background="White"/>
-                    <Button x:Name="BrowseButton" Content="📁 Browse File" Click="BrowseButton_Click" Margin="0,0,10,0"
-                             Style="{StaticResource ModernButton}" Width="120"/>
-                    <Button x:Name="AnalyzeButton" Content="🔍 Analyze" Click="AnalyzeButton_Click"
-                             Style="{StaticResource ModernButton}" Width="100"/>
-                </StackPanel>
-                <ProgressBar x:Name="LoadingProgressBar" Height="5" Margin="0,10,0,0" Visibility="Collapsed" IsIndeterminate="True" Background="#E1E5E9" Foreground="#007ACC"/>
-                <TextBlock x:Name="LoadingTextBlock" Text="Analyzing website..." FontSize="12" Foreground="#7F8C8D" Margin="0,5,0,0" Visibility="Collapsed"/>
-            </StackPanel>
-        </Border>
-
-
-        <!-- Combined Results and Scores Section -->
-        <Border Grid.Row="2" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
+        <!-- ========================================== -->
+        <!-- ROW 0: TOP APP BAR                         -->
+        <!-- ========================================== -->
+        <Border Grid.Row="0" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,0,0,1" Padding="20,12">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Analysis Results (Left Side) -->
-                <Grid Grid.Column="0" Margin="0,0,10,0">
+                <!-- Branding -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#0284C7" CornerRadius="8" Width="36" Height="36" Margin="0,0,12,0">
+                        <TextBlock Text="♿" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="AXIS Accessibility Studio" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <Border Background="#1E3A8A" CornerRadius="6" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="v2.2 PRO" FontSize="10" FontWeight="Bold" Foreground="#60A5FA"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Next-Gen Accessibility &amp; Quality Audit • WCAG 2.2 AA/AAA • Section 508 • RPwD Act" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Center Quick Samples -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="⚡ Quick Tests:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button Content="W3C Sample" Click="QuickSample_Click" Tag="https://www.w3.org/WAI/demos/bad/" Style="{StaticResource FilterChipButton}"/>
+                    <Button Content="Wikipedia" Click="QuickSample_Click" Tag="https://en.wikipedia.org" Style="{StaticResource FilterChipButton}"/>
+                    <Button Content="Example.com" Click="QuickSample_Click" Tag="https://example.com" Style="{StaticResource FilterChipButton}"/>
+                </StackPanel>
+
+                <!-- Right Controls: Theme Toggle & Summary -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="CopySummaryTopButton" Content="📋 Copy Summary" Click="CopySummaryButton_Click" Style="{StaticResource SecondaryButton}" Margin="0,0,8,0"/>
+                    <Button x:Name="ThemeToggleButton" Content="☀️ Light" Click="ThemeToggleButton_Click" Style="{StaticResource SecondaryButton}" ToolTip="Toggle Dark/Light Mode"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ========================================== -->
+        <!-- ROW 1: INPUT & LAUNCHPAD                   -->
+        <!-- ========================================== -->
+        <Border Grid.Row="1" Margin="20,14,20,10" Style="{StaticResource ModernCard}" Padding="16,14">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="🌐 Target URL / File:" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+
+                    <TextBox Grid.Column="1" x:Name="UrlTextBox" Height="38"
+                             FontSize="13" Padding="12,0" VerticalContentAlignment="Center"
+                             Background="{DynamicResource InputBackgroundBrush}"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             BorderBrush="{DynamicResource InputBorderBrush}"
+                             BorderThickness="1"
+                             Margin="0,0,10,0">
+                        <TextBox.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <Button Grid.Column="2" x:Name="BrowseButton" Content="📁 Browse HTML" Click="BrowseButton_Click"
+                            Style="{StaticResource SecondaryButton}" Height="38" Padding="14,0" Margin="0,0,10,0"/>
+
+                    <Button Grid.Column="3" x:Name="AnalyzeButton" Content="⚡ Run Full Audit" Click="AnalyzeButton_Click"
+                            Style="{StaticResource PrimaryButton}" Height="38" Padding="20,0"/>
+                </Grid>
+
+                <!-- Multi-stage progress indicators -->
+                <StackPanel x:Name="LoadingPanel" Visibility="Collapsed" Margin="0,10,0,0">
+                    <ProgressBar x:Name="LoadingProgressBar" Height="4" IsIndeterminate="True"
+                                 Background="#1E293B" Foreground="#0EA5E9" BorderThickness="0">
+                        <ProgressBar.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="2"/>
+                            </Style>
+                        </ProgressBar.Resources>
+                    </ProgressBar>
+                    <TextBlock x:Name="LoadingTextBlock" Text="Auditing website structure, WCAG 2.2 rules, and sustainability..."
+                               FontSize="11" Foreground="#38BDF8" Margin="0,6,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ========================================== -->
+        <!-- ROW 2: SIGHT / SCORE CARDS & STATUS BANNER -->
+        <!-- ========================================== -->
+        <Grid Grid.Row="2" Margin="20,0,20,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Card 1: Accessibility -->
+            <Border Grid.Column="0" Margin="0,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="♿ Accessibility" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="AccessibilityScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,0"/>
+                    <TextBlock Text="Core WCAG 2.2 Standard" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 2: SEO -->
+            <Border Grid.Column="1" Margin="4,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="🔍 SEO" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="SEOScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0"/>
+                    <TextBlock Text="Heuristic Estimate" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 3: Performance -->
+            <Border Grid.Column="2" Margin="4,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="⚡ Performance" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="PerformanceScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#F59E0B" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="PageSpeedSubText" Text="Load Time Heuristic" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 4: Best Practices -->
+            <Border Grid.Column="3" Margin="4,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="✨ Best Practices" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="BestPracticesScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#EC4899" Margin="0,2,0,0"/>
+                    <TextBlock Text="HTML5 Heuristic" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 5: Eco & Carbon -->
+            <Border Grid.Column="4" Margin="4,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="🌱 Eco / Carbon" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="EnvironmentScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#14B8A6" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="EcoRatingSubText" Text="Estimated CO₂" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 6: Safety & Sec -->
+            <Border Grid.Column="5" Margin="4,0,6,0" Style="{StaticResource ModernCard}" Padding="12,10">
+                <StackPanel>
+                    <TextBlock Text="🔒 Safety &amp; Sec" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock x:Name="SafetyScoreTextBlock" Text="--" FontSize="24" FontWeight="Bold" Foreground="#A855F7" Margin="0,2,0,0"/>
+                    <TextBlock Text="Headers &amp; SSL Heuristic" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 7: Overall Grade & Status Banner -->
+            <Border Grid.Column="6" Margin="4,0,0,0" Style="{StaticResource ModernCard}" Padding="14,10" Background="#131D2D">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#1E293B" BorderBrush="#38BDF8" BorderThickness="1.5" CornerRadius="10" Width="52" Height="52" Margin="0,0,12,0">
+                        <TextBlock x:Name="OverallGradeTextBlock" Text="--" FontSize="22" FontWeight="ExtraBold" Foreground="#38BDF8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="AUTOMATED AUDIT GRADE" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock x:Name="ComplianceTextBlock" Text="Automated: Ready" FontSize="12" FontWeight="Bold" Foreground="#10B981" Margin="0,1,0,0"/>
+                        <TextBlock x:Name="IssuesCountSummaryTextBlock" Text="Manual review required for full compliance" FontSize="9.5" Foreground="#F59E0B" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ========================================== -->
+        <!-- ROW 3: MAIN SPLIT WORKSPACE               -->
+        <!-- ========================================== -->
+        <Grid Grid.Row="3" Margin="20,0,20,10">
+            <Grid.ColumnDefinitions>
+                <!-- Left: Issues Explorer & Filter DataGrid -->
+                <ColumnDefinition Width="6.5*"/>
+                <!-- Splitter -->
+                <ColumnDefinition Width="8"/>
+                <!-- Right: Interactive Sight Inspection Studio & Chart -->
+                <ColumnDefinition Width="4.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: ISSUES EXPLORER -->
+            <Border Grid.Column="0" Style="{StaticResource ModernCard}" Padding="14">
+                <Grid>
                     <Grid.RowDefinitions>
+                        <!-- Filter & Search Toolbar -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Issues Table -->
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="🔍 Analysis Results" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+
+                    <!-- Filter & Search Toolbar -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <!-- Search Bar -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Grid.Column="0" x:Name="SearchTextBox" Height="32"
+                                     FontSize="12" Padding="10,0" VerticalContentAlignment="Center"
+                                     TextChanged="SearchTextBox_TextChanged"
+                                     Background="{DynamicResource InputBackgroundBrush}"
+                                     Foreground="{DynamicResource TextPrimaryBrush}"
+                                     BorderBrush="{DynamicResource InputBorderBrush}"
+                                     BorderThickness="1">
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+
+                            <TextBlock Grid.Column="0" x:Name="SearchWatermark" Text="🔍 Search issues by rule, code, fix, or WCAG..."
+                                       IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}"
+                                       VerticalAlignment="Center" Margin="12,0,0,0" FontSize="12"/>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
+                                <Button Content="All Severity" Click="SeverityFilter_Click" Tag="All" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🔴 Errors" Click="SeverityFilter_Click" Tag="Error" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🟡 Warnings" Click="SeverityFilter_Click" Tag="Warning" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🔵 Info" Click="SeverityFilter_Click" Tag="Info" Style="{StaticResource FilterChipButton}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Category Filter Chips -->
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="All Categories" Click="CategoryFilter_Click" Tag="All" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="♿ Accessibility" Click="CategoryFilter_Click" Tag="Accessibility" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🔍 SEO" Click="CategoryFilter_Click" Tag="SEO" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="⚡ Performance" Click="CategoryFilter_Click" Tag="Performance" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="✨ Best Practices" Click="CategoryFilter_Click" Tag="BestPractices" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🌱 Environment" Click="CategoryFilter_Click" Tag="Environment" Style="{StaticResource FilterChipButton}"/>
+                                <Button Content="🔒 Safety" Click="CategoryFilter_Click" Tag="Safety" Style="{StaticResource FilterChipButton}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </StackPanel>
+
+                    <!-- Issues DataGrid -->
                     <DataGrid Grid.Row="1" x:Name="ResultsDataGrid" AutoGenerateColumns="False"
-                               CanUserSortColumns="True" CanUserResizeColumns="True"
-                               SelectionMode="Single" IsReadOnly="True"
-                               BorderThickness="0" Background="White" RowBackground="White"
-                               AlternatingRowBackground="#F8F9FA" FontSize="12"
-                               RowHeaderWidth="0" GridLinesVisibility="Horizontal"
-                               VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                              CanUserSortColumns="True" CanUserResizeColumns="True"
+                              SelectionMode="Single" IsReadOnly="True"
+                              SelectionChanged="ResultsDataGrid_SelectionChanged"
+                              BorderThickness="0"
+                              Background="{DynamicResource CardBackgroundBrush}"
+                              RowBackground="{DynamicResource CardBackgroundBrush}"
+                              AlternatingRowBackground="{DynamicResource CardHeaderBrush}"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              FontSize="12"
+                              RowHeaderWidth="0"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="{DynamicResource CardBorderBrush}"
+                              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+
+                        <!-- Column Header Style -->
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource CardHeaderBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="Padding" Value="8,8"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="📂 Category" Binding="{Binding Category}" Width="120" FontWeight="SemiBold">
+                            <!-- Severity Badge -->
+                            <DataGridTextColumn Header="Severity" Binding="{Binding SeverityBadge}" Width="95" FontWeight="Bold">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap"/>
                                         <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="5,0"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Category}" Value="Accessibility">
-                                                <Setter Property="Foreground" Value="#007ACC"/>
-                                                <Setter Property="Background" Value="#E6F3FF"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Category}" Value="SEO">
-                                                <Setter Property="Foreground" Value="#28A745"/>
-                                                <Setter Property="Background" Value="#E8F5E8"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Category}" Value="Performance">
-                                                <Setter Property="Foreground" Value="#FFC107"/>
-                                                <Setter Property="Background" Value="#FFF8E1"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Category}" Value="BestPractices">
-                                                <Setter Property="Foreground" Value="#DC3545"/>
-                                                <Setter Property="Background" Value="#FEE"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Category}" Value="Environment">
-                                                <Setter Property="Foreground" Value="#17A2B8"/>
-                                                <Setter Property="Background" Value="#E0F7FA"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Category}" Value="Safety">
-                                                <Setter Property="Foreground" Value="#6F42C1"/>
-                                                <Setter Property="Background" Value="#F3E5F5"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="🔍 Issue Type" Binding="{Binding Type}" Width="140" FontWeight="SemiBold">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="5,0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="💻 Element Code" Binding="{Binding ElementSnippet}" Width="200">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap"/>
-                                        <Setter Property="FontFamily" Value="Consolas"/>
-                                        <Setter Property="FontSize" Value="10"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="5,0"/>
-                                        <Setter Property="Background" Value="#F8F9FA"/>
-                                        <Setter Property="Margin" Value="2"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="🔧 Suggested Fix" Binding="{Binding SuggestedFix}" Width="180">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="5,0"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="⚠️ Severity" Binding="{Binding SeverityLevel}" Width="100">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="Padding" Value="5,0"/>
+                                        <Setter Property="Padding" Value="6,4"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding SeverityLevel}" Value="Error">
-                                                <Setter Property="Foreground" Value="#E74C3C"/>
-                                                <Setter Property="Background" Value="#FFF5F5"/>
+                                                <Setter Property="Foreground" Value="#EF4444"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding SeverityLevel}" Value="Warning">
-                                                <Setter Property="Foreground" Value="#F39C12"/>
-                                                <Setter Property="Background" Value="#FFF8E1"/>
+                                                <Setter Property="Foreground" Value="#F59E0B"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding SeverityLevel}" Value="Info">
-                                                <Setter Property="Foreground" Value="#27AE60"/>
-                                                <Setter Property="Background" Value="#F0F8F0"/>
+                                                <Setter Property="Foreground" Value="#38BDF8"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="💡 Fix Example" Binding="{Binding FixExample}" Width="150">
+
+                            <!-- Category -->
+                            <DataGridTextColumn Header="Category" Binding="{Binding CategoryDisplay}" Width="120" FontWeight="SemiBold">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="6,4"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- Issue Type & Occurrences -->
+                            <DataGridTextColumn Header="Issue Description" Binding="{Binding Type}" Width="190" FontWeight="Bold">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextWrapping" Value="Wrap"/>
-                                        <Setter Property="FontFamily" Value="Consolas"/>
-                                        <Setter Property="FontSize" Value="9"/>
                                         <Setter Property="VerticalAlignment" Value="Center"/>
-                                        <Setter Property="Padding" Value="5,0"/>
-                                        <Setter Property="Background" Value="#F8F9FA"/>
-                                        <Setter Property="Margin" Value="2"/>
+                                        <Setter Property="Padding" Value="6,4"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- WCAG / Standard Reference -->
+                            <DataGridTextColumn Header="Standard" Binding="{Binding WcagGuideline}" Width="160">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="6,4"/>
+                                        <Setter Property="FontSize" Value="11"/>
+                                        <Setter Property="Foreground" Value="#94A3B8"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- Occurrences -->
+                            <DataGridTextColumn Header="Count" Binding="{Binding InstancesSummary}" Width="90">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="6,4"/>
+                                        <Setter Property="Foreground" Value="#38BDF8"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- Suggested Fix -->
+                            <DataGridTextColumn Header="Suggested Fix" Binding="{Binding SuggestedFix}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Padding" Value="6,4"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
                         </DataGrid.Columns>
+
+                        <!-- Row Style -->
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
-                                <Setter Property="Height" Value="Auto"/>
-                                <Setter Property="MinHeight" Value="50"/>
+                                <Setter Property="MinHeight" Value="42"/>
+                                <Setter Property="Margin" Value="0,1"/>
                                 <Style.Triggers>
-                                    <!-- Category-based coloring -->
-                                    <DataTrigger Binding="{Binding Category}" Value="Accessibility">
-                                        <Setter Property="Background" Value="#F0F8FF"/>
-                                        <Setter Property="BorderBrush" Value="#007ACC"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Category}" Value="SEO">
-                                        <Setter Property="Background" Value="#F8FFF8"/>
-                                        <Setter Property="BorderBrush" Value="#28A745"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Category}" Value="Performance">
-                                        <Setter Property="Background" Value="#FFFFF8"/>
-                                        <Setter Property="BorderBrush" Value="#FFC107"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Category}" Value="BestPractices">
-                                        <Setter Property="Background" Value="#FFF8F8"/>
-                                        <Setter Property="BorderBrush" Value="#DC3545"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Category}" Value="Environment">
-                                        <Setter Property="Background" Value="#F0FDFA"/>
-                                        <Setter Property="BorderBrush" Value="#17A2B8"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Category}" Value="Safety">
-                                        <Setter Property="Background" Value="#FAF5FF"/>
-                                        <Setter Property="BorderBrush" Value="#6F42C1"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </DataTrigger>
-                                    <!-- Severity-based overrides (higher priority) -->
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="Accessibility"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="SEO"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="Performance"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="BestPractices"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="Accessibility"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="SEO"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="Performance"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="BestPractices"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="Environment"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Error"/>
-                                            <Condition Binding="{Binding Category}" Value="Safety"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFE6E6"/>
-                                        <Setter Property="BorderBrush" Value="#E74C3C"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,3"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="Environment"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding SeverityLevel}" Value="Warning"/>
-                                            <Condition Binding="{Binding Category}" Value="Safety"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#FFF8E1"/>
-                                        <Setter Property="BorderBrush" Value="#F39C12"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                                    </MultiDataTrigger>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#F1F5F9"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGrid.RowStyle>
-                </DataGrid>
-            </Grid>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#1E293B"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#0C4A6E"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </Border>
 
-            <!-- Category Scores (Right Side) -->
-            <Border Grid.Column="1" Background="White" BorderBrush="#E1E5E9" BorderThickness="1" CornerRadius="10" Padding="15">
-                <StackPanel>
-                    <TextBlock Text="📊 Category Scores" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,15"/>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="♿ Accessibility" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="AccessibilityScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#007ACC" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="🔍 SEO" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="SEOScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#28A745" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="⚡ Performance" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="PerformanceScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#FFC107" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="✨ Best Practices" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="BestPracticesScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#DC3545" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="🌱 Environment" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="EnvironmentScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#17A2B8" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="🔒 Safety" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="SafetyScoreTextBlock" Text="--" FontSize="18" FontWeight="Bold" Foreground="#6F42C1" Margin="0,5,0,10"/>
-                    </StackPanel>
-                    <Separator Margin="0,0,0,15"/>
+            <!-- Grid Splitter -->
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent" Cursor="SizeWE"/>
+
+            <!-- RIGHT: INTERACTIVE SIGHT INSPECTION STUDIO & VISUAL CHART -->
+            <Border Grid.Column="2" Style="{StaticResource ModernCard}" Padding="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock Text="✅ Overall Status" FontSize="14" FontWeight="Bold" Foreground="#2C3E50"/>
-                        <TextBlock x:Name="ComplianceTextBlock" Text="--" FontSize="16" FontWeight="SemiBold" Foreground="#27AE60" Margin="0,5,0,0"/>
+                        <!-- Inspection Header -->
+                        <Border Background="{DynamicResource CardHeaderBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="🔍 ISSUE INSPECTION &amp; REMEDIATION" FontSize="10" FontWeight="Bold" Foreground="#38BDF8"/>
+                                    <TextBlock x:Name="InspectorTitleTextBlock" Text="Select an issue to inspect" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <Border Grid.Column="1" x:Name="InspectorSeverityBadge" Background="#1E293B" CornerRadius="6" Padding="8,4" VerticalAlignment="Center">
+                                    <TextBlock x:Name="InspectorSeverityText" Text="Select Issue" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Standard & Impact Reference Tag -->
+                        <Border Background="#10192A" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10,8" Margin="0,0,0,12">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📋 Guideline: " FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="InspectorGuidelineText" Text="--" FontSize="11" Foreground="#38BDF8" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock Text="⚠️ Impact Level: " FontWeight="Bold" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="InspectorImpactText" Text="--" FontSize="11" Foreground="#F59E0B"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Multiple Occurrences Selector -->
+                        <StackPanel x:Name="OccurrencesPanel" Margin="0,0,0,12" Visibility="Collapsed">
+                            <TextBlock Text="🎯 Occurrences on page:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <ComboBox x:Name="InstanceComboBox" Height="28" SelectionChanged="InstanceComboBox_SelectionChanged"
+                                      Background="{DynamicResource InputBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- Offending Element Snippet -->
+                        <TextBlock Text="💻 Offending Code Snippet:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                        <Border Background="{DynamicResource CodeBoxBackgroundBrush}" BorderBrush="{DynamicResource CodeBoxBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,6">
+                            <TextBox x:Name="InspectorElementTextBox" Text="// Select an issue to inspect the snippet"
+                                     FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11"
+                                     Foreground="#E2E8F0" Background="Transparent" BorderThickness="0"
+                                     TextWrapping="Wrap" IsReadOnly="True" MaxHeight="130" VerticalScrollBarVisibility="Auto"/>
+                        </Border>
+                        <Button x:Name="CopySnippetButton" Content="📋 Copy Code Snippet" Click="CopySnippetButton_Click"
+                                Style="{StaticResource SecondaryButton}" HorizontalAlignment="Right" Margin="0,0,0,12"/>
+
+                        <!-- Suggested Remediation Fix -->
+                        <TextBlock Text="💡 Remediation Advice:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="InspectorFixAdviceText" Text="Actionable guidance will appear here."
+                                   FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                        <!-- Fix Example Code -->
+                        <TextBlock Text="🛠️ Code Example / Quick Fix:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                        <Border Background="{DynamicResource CodeBoxBackgroundBrush}" BorderBrush="{DynamicResource CodeBoxBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,6">
+                            <TextBox x:Name="InspectorFixExampleTextBox" Text="// Remediation example will appear here"
+                                     FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11"
+                                     Foreground="#38BDF8" Background="Transparent" BorderThickness="0"
+                                     TextWrapping="Wrap" IsReadOnly="True" MaxHeight="100" VerticalScrollBarVisibility="Auto"/>
+                        </Border>
+                        <Grid Margin="0,0,0,12">
+                            <CheckBox x:Name="MarkResolvedCheckBox" Content="Dismissed in session (Manual review note)" Click="MarkResolvedCheckBox_Click"
+                                      VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                            <Button x:Name="CopyFixButton" Content="📋 Copy Fix Example" Click="CopyFixButton_Click"
+                                    AutomationProperties.Name="Copy suggested fix code"
+                                    Style="{StaticResource SecondaryButton}" HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <Separator Background="{DynamicResource CardBorderBrush}" Margin="0,6,0,12"/>
+
+                        <!-- Category Scores Chart -->
+                        <TextBlock Text="📊 CATEGORY SCORE COMPARISON" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                        <Border Background="#101827" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10">
+                            <lvc:CartesianChart x:Name="ScoreChart" Height="150">
+                                <lvc:CartesianChart.Series>
+                                    <lvc:ColumnSeries Title="Score" Values="{Binding Scores}" Fill="#0EA5E9" MaxColumnWidth="28"/>
+                                </lvc:CartesianChart.Series>
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Title="Category" Labels="{Binding Labels}" FontSize="9" Foreground="#94A3B8"/>
+                                </lvc:CartesianChart.AxisX>
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Score (0-100)" MinValue="0" MaxValue="100" FontSize="9" Foreground="#94A3B8"/>
+                                </lvc:CartesianChart.AxisY>
+                            </lvc:CartesianChart>
+                        </Border>
+
                     </StackPanel>
-                    <Separator Margin="0,15,0,15"/>
-                    <TextBlock Text="📊 Category Breakdown" FontSize="14" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock x:Name="CategorySummaryTextBlock" Text="--" FontSize="12" Foreground="#7F8C8D" TextWrapping="Wrap"/>
-                    </StackPanel>
-                    <Separator Margin="0,0,0,15"/>
-                    <lvc:CartesianChart x:Name="ScoreChart" Height="180" Margin="0,0,0,0">
-                        <lvc:CartesianChart.Series>
-                            <lvc:ColumnSeries Title="Scores" Values="{Binding Scores}" Fill="#007ACC" />
-                        </lvc:CartesianChart.Series>
-                        <lvc:CartesianChart.AxisX>
-                            <lvc:Axis Title="Categories" Labels="{Binding Labels}" FontSize="10"/>
-                        </lvc:CartesianChart.AxisX>
-                        <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="Score" MinValue="0" MaxValue="100" FontSize="10"/>
-                        </lvc:CartesianChart.AxisY>
-                    </lvc:CartesianChart>
-                </StackPanel>
+                </ScrollViewer>
             </Border>
         </Grid>
-    </Border>
 
-        <!-- Export Section -->
-        <Border Grid.Row="4" Style="{StaticResource CardBorder}" Margin="20,0,20,20" Padding="20">
-            <StackPanel>
-                <TextBlock Text="💾 Export Report" FontSize="16" FontWeight="SemiBold" Foreground="#2C3E50" Margin="0,0,0,10"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="ExportTxtButton" Content="📄 Export to TXT" Click="ExportTxtButton_Click"
-                             Style="{StaticResource ModernButton}" Background="#28A745"/>
-                    <Button x:Name="ExportPdfButton" Content="📕 Export to PDF" Click="ExportPdfButton_Click" Margin="15,0,0,0"
-                             Style="{StaticResource ModernButton}" Background="#DC3545"/>
-                    <Button x:Name="ExportHtmlButton" Content="🌐 Export to HTML" Click="ExportHtmlButton_Click" Margin="15,0,0,0"
-                             Style="{StaticResource ModernButton}" Background="#007BFF"/>
+        <!-- ========================================== -->
+        <!-- ROW 4: FOOTER ACTION & EXPORT CENTER       -->
+        <!-- ========================================== -->
+        <Border Grid.Row="4" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1,0,0" Padding="20,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Audit Telemetry / Diagnostics -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="FooterStatusTextBlock" Text="AXIS Accessibility Studio • Ready to audit" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
-            </StackPanel>
+
+                <!-- Right: Multi-Format Export Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="💾 Export Audit:" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <Button x:Name="ExportPdfButton" Content="📕 PDF Report" Click="ExportPdfButton_Click" Style="{StaticResource ExportButton}"/>
+                    <Button x:Name="ExportHtmlButton" Content="🌐 HTML Report" Click="ExportHtmlButton_Click" Style="{StaticResource ExportButton}"/>
+                    <Button x:Name="ExportJsonButton" Content="💾 JSON (CI/CD)" Click="ExportJsonButton_Click" Style="{StaticResource ExportButton}"/>
+                    <Button x:Name="ExportMdButton" Content="📝 Markdown" Click="ExportMdButton_Click" Style="{StaticResource ExportButton}"/>
+                    <Button x:Name="ExportTxtButton" Content="📄 Text" Click="ExportTxtButton_Click" Style="{StaticResource ExportButton}"/>
+                </StackPanel>
+            </Grid>
         </Border>
+
     </Grid>
 </Window>

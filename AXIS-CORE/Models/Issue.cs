@@ -16,5 +16,10 @@ namespace AXIS_CORE.Models
         public int Count { get; set; } = 1;
         // Store multiple unique element instances for grouped display
         public List<string> ElementInstances { get; set; } = new List<string>();
+
+        // Standards reference & remediation metadata
+        public string? WcagGuideline { get; set; }
+        public string? Impact { get; set; }
+        public bool IsResolved { get; set; } = false;
     }
 }
