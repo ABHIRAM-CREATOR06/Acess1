@@ -47,3 +47,6 @@ TestResults/
 
 # Rider
 .idea/
+
+# Ignore Makefile 
+Makefile
